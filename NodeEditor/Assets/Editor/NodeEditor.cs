@@ -51,7 +51,6 @@ public class NodeEditor
         GUIScaleUtility.EndScale();
     }
 
-
     private void drawGrid()
     {
         var size = window.Size.size;
@@ -78,8 +77,53 @@ public class NodeEditor
     private void drawNodes()
     {
         foreach (EditorNode node in canvas.nodes) {
+            drawKnobs(node);
             drawNode(node);
         }
+    }
+
+    private void drawKnobs(EditorNode node)
+    {
+        var bodyRect = node.bodyRect;
+        var output = node.output;
+        var input = node.input;
+
+        if (input != null) {
+
+            // Top / Down
+            // float x = bodyRect.x + (bodyRect.width - input.bodyRect.width) / 2f;
+            // float y = bodyRect.y - input.bodyRect.height;
+
+            // Left / Right
+            float x = bodyRect.x - input.bodyRect.width;
+            float y = bodyRect.y + (bodyRect.height - input.bodyRect.height) / 2f;
+
+            input.bodyRect.position = new Vector2(x, y);
+            drawKnob(input);
+        }
+
+        if (output != null) {
+
+            // Top / Down
+            // float x = bodyRect.x + (bodyRect.width - output.bodyRect.width) / 2f;
+            // float y = bodyRect.y + bodyRect.height;
+
+            // Left / Right
+            float x = bodyRect.x + bodyRect.width;
+            float y = bodyRect.y + (bodyRect.height - input.bodyRect.height) / 2f;
+
+            output.bodyRect.position = new Vector2(x, y);
+            drawKnob(output);
+        }
+    }
+
+    private void drawKnob(EditorKnob knob)
+    {
+        // Convert the body rect from canvas to screen space.
+        var screenRect = knob.bodyRect;
+        screenRect.position = CanvasToScreenSpace(screenRect.position);
+
+        GUI.DrawTexture(screenRect, _nodeBaseTex);
     }
 
     private void drawConnections()

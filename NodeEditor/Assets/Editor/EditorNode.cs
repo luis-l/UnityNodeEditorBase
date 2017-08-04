@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class EditorNode {
+public class EditorNode
+{
 
     public static readonly Vector2 kDefaultSize = new Vector2(100f, 80f);
 
@@ -27,12 +28,34 @@ public class EditorNode {
     private GUIStyle _iconNameStyle;
     private GUIContent _iconNameContent;
 
-    public EditorNode(string nodeName, Texture2D icon, Vector2 size)
+    public readonly EditorOutputKnob output;
+    public readonly EditorInputKnob input;
+
+    public readonly bool bCanHaveMultipleOutputs;
+
+    public EditorNode(string nodeName, Texture2D icon, Vector2 size, bool canHaveMultipleOuts = true)
     {
         name = nodeName;
         iconTex = icon;
         bodyRect.size = size;
+
+        output = new EditorOutputKnob(this);
+        input = new EditorInputKnob(this);
+
+        bCanHaveMultipleOutputs = canHaveMultipleOuts;
     }
+
+    /// <summary>
+    /// Called when the output knob had an input connection removed.
+    /// </summary>
+    /// <param name="removedInput"></param>
+    public virtual void OnInputConnectionRemoved(EditorInputKnob removedInput) { }
+
+    /// <summary>
+    /// Called when the output knob made a connection to an input knob.
+    /// </summary>
+    /// <param name="addedInput"></param>
+    public virtual void OnNewInputConnection(EditorInputKnob addedInput) { }
 
     #region Styles and Contents
 

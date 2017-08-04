@@ -14,7 +14,7 @@ public class InputManager
 
     public EditorNode selectedNode;
 
-    private ActionBase _currentMultiStageAction= null;
+    private ActionBase _currentMultiStageAction = null;
 
     public Vector2 lastClickedPosition;
 
@@ -86,14 +86,8 @@ public class InputManager
     {
         bool bKeysDown = e.control && e.shift && e.keyCode == KeyCode.Z && e.type == EventType.KeyDown;
 
-        if (bKeysDown && _undoStack.Count != 0) {
-
-            ActionBase action = _undoStack.Pop();
-            _redoStack.Push(action);
-
-            action.Undo();
-            window.Repaint();
-            e.Use();
+        if (bKeysDown) {
+            UndoAction();
         }
     }
 
@@ -101,14 +95,8 @@ public class InputManager
     {
         bool bKeysDown = e.control && e.shift && e.keyCode == KeyCode.Y && e.type == EventType.KeyDown;
 
-        if (bKeysDown && _redoStack.Count != 0) {
-
-            ActionBase action = _redoStack.Pop();
-            _undoStack.Push(action);
-
-            action.Redo();
-            window.Repaint();
-            e.Use();
+        if (bKeysDown) {
+            RedoAction();
         }
     }
 
@@ -199,5 +187,29 @@ public class InputManager
         }
 
         return null;
+    }
+
+    public void UndoAction()
+    {
+        if (_undoStack.Count != 0) {
+
+            ActionBase action = _undoStack.Pop();
+            _redoStack.Push(action);
+
+            action.Undo();
+            window.Repaint();
+        }
+    }
+
+    public void RedoAction()
+    {
+        if (_redoStack.Count != 0) {
+
+            ActionBase action = _redoStack.Pop();
+            _undoStack.Push(action);
+
+            action.Redo();
+            window.Repaint();
+        }
     }
 }

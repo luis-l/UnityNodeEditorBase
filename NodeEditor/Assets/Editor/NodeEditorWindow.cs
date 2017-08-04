@@ -45,25 +45,25 @@ public class NodeEditorWindow : EditorWindow
         editor.Draw();
 
         // Draw tool bar last so it renders on top of everything.
-        DrawToolbar();
+        drawToolbar();
 
         input.ProcessInput(Event.current);
     }
 
-    protected virtual void DrawToolbar()
+    private void drawToolbar()
     {
         EditorGUILayout.BeginHorizontal("Toolbar");
 
         if (DropdownButton("File", toolbarButtonWidth)) {
-            CreateFileMenu();
+            createFileMenu();
         }
 
         if (DropdownButton("Edit", toolbarButtonWidth)) {
-
+            createEditMenu();
         }
 
         if (DropdownButton("View", toolbarButtonWidth)) {
-
+            createViewMenu();
         }
 
         // Make the toolbar extend all throughout the window extension.
@@ -72,18 +72,47 @@ public class NodeEditorWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
-    protected virtual void CreateFileMenu()
+    private void createFileMenu()
     {
         var menu = new GenericMenu();
 
         menu.AddItem(new GUIContent("Create New"), false, () => { Debug.Log("Create New"); });
-        menu.AddItem(new GUIContent("Load"), false, () => { Debug.Log("Load"); });
-
         menu.AddSeparator("");
-        menu.AddItem(new GUIContent("Save"), false, () => { Debug.Log("Save"); });
-        menu.AddItem(new GUIContent("Save As"), false, () => { Debug.Log("Save As"); });
+
+        menu.AddItem(new GUIContent("Load"), false, openLoadFileWindow);
+        menu.AddItem(new GUIContent("Save"), false, openSaveFileWindow);
 
         menu.DropDown(new Rect(5f, toolbarHeight, 0f, 0f));
+    }
+
+    private void createEditMenu()
+    {
+        var menu = new GenericMenu();
+
+        menu.AddItem(new GUIContent("Undo"), false, input.UndoAction);
+        menu.AddItem(new GUIContent("Redo"), false, input.RedoAction);
+
+        menu.DropDown(new Rect(55f, toolbarHeight, 0f, 0f));
+    }
+
+    private void createViewMenu()
+    {
+        var menu = new GenericMenu();
+
+        menu.AddItem(new GUIContent("Zoom In"), false, () => { editor.Zoom(-1); });
+        menu.AddItem(new GUIContent("Zoom Out"), false, () => { editor.Zoom(1); });
+
+        menu.DropDown(new Rect(105f, toolbarHeight, 0f, 0f));
+    }
+
+    private void openLoadFileWindow()
+    {
+        EditorUtility.OpenFilePanel("Open Node Graph", "Assets/", "asset");
+    }
+
+    private void openSaveFileWindow()
+    {
+        EditorUtility.SaveFilePanelInProject("Save Node Graph", "New Graph", "asset", "Select a destination to save the graph.");
     }
 
     public bool DropdownButton(string name, float width)
