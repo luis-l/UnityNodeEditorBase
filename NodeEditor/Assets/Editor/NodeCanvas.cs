@@ -23,7 +23,6 @@ public class NodeCanvas
         var node = new EditorNode("Basic Node", icon, EditorNode.kDefaultSize);
 
         nodes.Add(node);
-
         return node;
     }
 

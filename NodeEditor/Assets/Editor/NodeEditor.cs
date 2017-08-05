@@ -180,13 +180,15 @@ public class NodeEditor
     /// </summary>
     public static void DrawBezier(Vector2 start, Vector2 end, Color color)
     {
-        const float dirFactor = 80f;
+        Vector2 endToStart = (end - start);
+        float dirFactor = Mathf.Clamp(endToStart.magnitude, 20f, 80f);
 
-        Vector2 endToStart = (end - start).normalized;
+        endToStart.Normalize();
         Vector2 project = Vector3.Project(endToStart, Vector3.right);
 
         Vector2 startTan = start + project * dirFactor;
         Vector2 endTan = end - project * dirFactor;
+
 
         UnityEditor.Handles.DrawBezier(start, end, startTan, endTan, color, null, 3f);
     }

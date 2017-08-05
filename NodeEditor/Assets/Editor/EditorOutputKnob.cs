@@ -16,26 +16,31 @@ public class EditorOutputKnob : EditorKnob {
         get { return _inputs; }
     }
 
+    public int InputCount
+    {
+        get { return _inputs.Count; }
+    }
+
     public void Add(EditorInputKnob input)
     {
+        // the input cannot be connected to anything.
+        if (input.HasOutputConnected()) {
+
+            // Inputs need to be properly handled by the Action system.
+            // So it works with undo.
+            Debug.LogWarning("Cannot add an input that is already connected");
+            return;
+        }
+
         // Avoid connecting when it is already connected.
         if (input.OutputConnection == this) {
             Debug.LogWarning("Already Connected");
             return;
         }
 
-        // Unparent
-        if (input.HasOutputConnected()) {
-            input.OutputConnection.Remove(input);
-        }
-
         input.Connect(this);
-
-        if (!parentNode.bCanHaveMultipleOutputs) {
-            RemoveAll();
-        }
-
         _inputs.Add(input);
+
         parentNode.OnNewInputConnection(input);
     }
 
