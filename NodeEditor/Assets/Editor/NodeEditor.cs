@@ -134,7 +134,11 @@ public class NodeEditor
 
             if (node.output != null) {
                 foreach (EditorInputKnob input in node.output.Inputs) {
-                    DrawLine(node.output.bodyRect.center, input.bodyRect.center);
+
+                    Vector2 start = CanvasToScreenSpace(node.output.bodyRect.center);
+                    Vector2 end = CanvasToScreenSpace(input.bodyRect.center);
+
+                    DrawBezier(start, end, Color.white);
                 }
             }
         }
@@ -145,19 +149,9 @@ public class NodeEditor
         var output = _window.state.selectedOutput;
 
         if (output != null) {
-            DrawLine(output.bodyRect.center, MousePosition());
+            Vector2 start = CanvasToScreenSpace(output.bodyRect.center);
+            DrawBezier(start, Event.current.mousePosition, Color.gray);
         }
-    }
-
-    /// <summary>
-    /// Draws a line using canvas space coordinates.
-    /// </summary>
-    public void DrawLine(Vector2 start, Vector2 end)
-    {
-        CanvasToScreenSpace(ref start);
-        CanvasToScreenSpace(ref end);
-
-        Handles.DrawLine(start, end);
     }
 
     private void drawNode(EditorNode node)
@@ -179,6 +173,32 @@ public class NodeEditor
 
         GUILayout.EndArea();
         GUI.EndGroup();
+    }
+
+    /// <summary>
+    /// Draws a bezier between the two end points in screen space.
+    /// </summary>
+    public static void DrawBezier(Vector2 start, Vector2 end, Color color)
+    {
+        const float dirFactor = 80f;
+
+        Vector2 endToStart = (end - start).normalized;
+        Vector2 project = Vector3.Project(endToStart, Vector3.right);
+
+        Vector2 startTan = start + project * dirFactor;
+        Vector2 endTan = end - project * dirFactor;
+
+        UnityEditor.Handles.DrawBezier(start, end, startTan, endTan, color, null, 3f);
+    }
+
+    /// <summary>
+    /// Draws a line between the two end points.
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    public static void DrawLine(Vector2 start, Vector2 end)
+    {
+        Handles.DrawLine(start, end);
     }
 
     #region Space Transformations and Mouse Utilities
