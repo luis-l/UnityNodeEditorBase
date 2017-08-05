@@ -8,7 +8,7 @@ public class EditorOutputKnob : EditorKnob {
 
     public EditorOutputKnob(EditorNode parent) : base(parent)
     {
-
+        _inputs = new List<EditorInputKnob>();
     }
 
     public IEnumerable<EditorInputKnob> Inputs

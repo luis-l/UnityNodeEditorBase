@@ -19,20 +19,22 @@ public class NodeEditorWindow : EditorWindow
 
     public NodeEditor editor;
     public NodeCanvas canvas;
-    public InputManager input;
+    public ActionManager actions;
+    public ActionTriggerSystem triggers;
+    public NodeEditorState state;
 
     void OnEnable()
     {
         GUIScaleUtility.CheckInit();
 
-        editor = new NodeEditor();
+        actions = new ActionManager(this);
+        editor = new NodeEditor(this);
         canvas = new NodeCanvas();
-        input = new InputManager();
+        triggers = new ActionTriggerSystem(actions);
+        state = new NodeEditorState();
 
         editor.canvas = canvas;
-        editor.window = this;
-        input.window = this;
-
+        
         // NOTE: You can also serialize data members so the window remembers
         // what data to use when the window is re-opened after an engine restart/reload.
         // For example you can have a Node Graph structure saved as a Scriptable Object asset,
@@ -43,11 +45,10 @@ public class NodeEditorWindow : EditorWindow
     void OnGUI()
     {
         editor.Draw();
-
-        // Draw tool bar last so it renders on top of everything.
         drawToolbar();
 
-        input.ProcessInput(Event.current);
+        // Input and events should be processed after drawing.
+        triggers.Update();
     }
 
     private void drawToolbar()
@@ -89,8 +90,8 @@ public class NodeEditorWindow : EditorWindow
     {
         var menu = new GenericMenu();
 
-        menu.AddItem(new GUIContent("Undo"), false, input.UndoAction);
-        menu.AddItem(new GUIContent("Redo"), false, input.RedoAction);
+        menu.AddItem(new GUIContent("Undo"), false, actions.UndoAction);
+        menu.AddItem(new GUIContent("Redo"), false, actions.RedoAction);
 
         menu.DropDown(new Rect(55f, toolbarHeight, 0f, 0f));
     }

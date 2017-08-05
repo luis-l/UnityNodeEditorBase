@@ -1,19 +1,13 @@
 ﻿
 using UnityEngine;
 
-public class DragNode : ActionBase
+public class DragNode : MultiStageAction
 {
     private EditorNode _draggingNode;
 
     private Vector2 _startDragPos, _endDragPos;
 
     public const float dragSpeed = 1f;
-
-    public override void Do()
-    {
-        _draggingNode = input.selectedNode;
-        _startDragPos = _draggingNode.bodyRect.position;
-    }
 
     public override void Undo()
     {
@@ -25,13 +19,19 @@ public class DragNode : ActionBase
         _draggingNode.bodyRect.position = _endDragPos;
     }
 
-    public override void ActionUpdate()
+    public override void Do()
     {
-        NodeCanvas canvas = input.window.canvas;
+        NodeCanvas canvas = manager.window.canvas;
         _draggingNode.bodyRect.position += Event.current.delta * canvas.ZoomScale * dragSpeed;
     }
 
-    public override void OnActionDone()
+    public override void OnActionStart()
+    {
+        _draggingNode = manager.window.state.selectedNode;
+        _startDragPos = _draggingNode.bodyRect.position;
+    }
+
+    public override void OnActionEnd()
     {
         _endDragPos = _draggingNode.bodyRect.position;
     }

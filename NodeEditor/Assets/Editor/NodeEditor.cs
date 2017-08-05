@@ -13,7 +13,7 @@ public class NodeEditor
     /// The associated canvas to visualize and edit.
     /// </summary>
     public NodeCanvas canvas;
-    public NodeEditorWindow window;
+    private NodeEditorWindow _window;
 
     private Texture2D _gridTex;
     private Texture2D _nodeBaseTex;
@@ -21,12 +21,13 @@ public class NodeEditor
     // To keep track of zooming.
     private Vector2 _zoomAdjustment;
 
-    public NodeEditor()
+    public NodeEditor(NodeEditorWindow w)
     {
         TextureLib.LoadStandardTextures();
 
         _gridTex = TextureLib.GetTexture("Grid");
         _nodeBaseTex = TextureLib.GetTexture("GrayGradient");
+        _window = w;
     }
 
     public void Draw()
@@ -40,11 +41,12 @@ public class NodeEditor
 
     private void drawCanvasContents()
     {
-        Rect canvasRect = window.Size;
+        Rect canvasRect = _window.Size;
         var center = canvasRect.size / 2f;
 
         _zoomAdjustment = GUIScaleUtility.BeginScale(ref canvasRect, center, canvas.ZoomScale, true, false);
 
+        drawConnectionPreview();
         drawConnections();
         drawNodes();
 
@@ -53,7 +55,7 @@ public class NodeEditor
 
     private void drawGrid()
     {
-        var size = window.Size.size;
+        var size = _window.Size.size;
         var center = size / 2f;
 
         float zoom = canvas.ZoomScale;
@@ -71,7 +73,7 @@ public class NodeEditor
         Vector2 tileAmount = new Vector2(tileAmountX, tileAmountY);
 
         // Draw tiled background
-        GUI.DrawTextureWithTexCoords(window.Size, _gridTex, new Rect(tileOffset, tileAmount));
+        GUI.DrawTextureWithTexCoords(_window.Size, _gridTex, new Rect(tileOffset, tileAmount));
     }
 
     private void drawNodes()
@@ -128,7 +130,34 @@ public class NodeEditor
 
     private void drawConnections()
     {
-        // TODO
+        foreach (EditorNode node in canvas.nodes) {
+
+            if (node.output != null) {
+                foreach (EditorInputKnob input in node.output.Inputs) {
+                    DrawLine(node.output.bodyRect.center, input.bodyRect.center);
+                }
+            }
+        }
+    }
+
+    private void drawConnectionPreview()
+    {
+        var output = _window.state.selectedOutput;
+
+        if (output != null) {
+            DrawLine(output.bodyRect.center, MousePosition());
+        }
+    }
+
+    /// <summary>
+    /// Draws a line using canvas space coordinates.
+    /// </summary>
+    public void DrawLine(Vector2 start, Vector2 end)
+    {
+        CanvasToScreenSpace(ref start);
+        CanvasToScreenSpace(ref end);
+
+        Handles.DrawLine(start, end);
     }
 
     private void drawNode(EditorNode node)
@@ -173,7 +202,7 @@ public class NodeEditor
     /// </summary>
     public Vector2 ScreenToCanvasSpace(Vector2 screenPos)
     {
-        var canvasRect = window.Size;
+        var canvasRect = _window.Size;
         var center = canvasRect.size / 2f;
         return (screenPos - center) * canvas.ZoomScale - canvas.panOffset;
     }
@@ -239,6 +268,72 @@ public class NodeEditor
             EditorNode node = canvas.nodes[i];
 
             if (IsUnderMouse(node.bodyRect)) {
+                callback(node);
+                return true;
+            }
+        }
+
+        // No node under mouse.
+        return false;
+    }
+
+    /// <summary>
+    /// Tests if the mouse is over an output.
+    /// </summary>
+    /// <param name="callback"></param>
+    /// <returns></returns>
+    public bool OnMouseOverOutput(Action<EditorOutputKnob> callback)
+    {
+        foreach (var node in canvas.nodes) {
+
+            if (node.output == null) {
+                continue;
+            }
+
+            if (IsUnderMouse(node.output.bodyRect)) {
+                callback(node.output);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Tests if the mouse is over an input.
+    /// </summary>
+    /// <param name="callback"></param>
+    /// <returns></returns>
+    public bool OnMouseOverInput(Action<EditorInputKnob> callback)
+    {
+        foreach (var node in canvas.nodes) {
+
+            if (node.input == null) {
+                continue;
+            }
+
+            if (IsUnderMouse(node.input.bodyRect)) {
+                callback(node.input);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Tests if the mouse is over the node or the input.
+    /// </summary>
+    /// <param name="callback"></param>
+    /// <returns></returns>
+    public bool OnMouseOverNode_OrInput(Action<EditorNode> callback)
+    {
+        foreach (var node in canvas.nodes) {
+
+            bool bCondition = IsUnderMouse(node.bodyRect) ||
+                (node.input != null && IsUnderMouse(node.input.bodyRect));
+
+            if (bCondition) {
                 callback(node);
                 return true;
             }
