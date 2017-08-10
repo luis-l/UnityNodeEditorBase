@@ -12,10 +12,10 @@ public class CreateConnection : MultiStageAction
     private EditorOutputKnob _output;
 
     // The output of the old node it was connected to.
-    private EditorOutputKnob _oldNodeOutput;
+    private EditorOutputKnob _oldConnectedOutput;
 
-    // Old inputs of the origin node.
-    private List<EditorInputKnob> _oldOriginInputs;
+    // Old inputs of the node.
+    private List<EditorInputKnob> _oldConnectedInputs;
 
     public override void Do()
     {
@@ -30,32 +30,32 @@ public class CreateConnection : MultiStageAction
 
     public override void Redo()
     {
-        removeOldConnections();
+        disconnectOldConnections();
         _output.Add(_input);
     }
 
     private void reconnectOldConnections()
     {
         //  Re-connect old connections
-        if (_oldNodeOutput != null) {
-            _oldNodeOutput.Add(_input);
+        if (_oldConnectedOutput != null) {
+            _oldConnectedOutput.Add(_input);
         }
 
-        if (_oldOriginInputs != null) {
-            foreach (var input in _oldOriginInputs) {
+        if (_oldConnectedInputs != null) {
+            foreach (var input in _oldConnectedInputs) {
                 _output.Add(input);
             }
         }
     }
 
-    private void removeOldConnections()
+    private void disconnectOldConnections()
     {
         // Remove old connections
-        if (_oldNodeOutput != null) {
-            _oldNodeOutput.Remove(_input);
+        if (_oldConnectedOutput != null) {
+            _oldConnectedOutput.Remove(_input);
         }
 
-        if (_oldOriginInputs != null) {
+        if (_oldConnectedInputs != null) {
             _output.RemoveAll();
         }
     }
@@ -74,7 +74,7 @@ public class CreateConnection : MultiStageAction
         if (_input != null && _output.CanConnectInput(_input)) {
 
             cacheOldConnections();
-            removeOldConnections();
+            disconnectOldConnections();
             return _output.Add(_input);
         }
 
@@ -85,12 +85,12 @@ public class CreateConnection : MultiStageAction
     {
         // Check if the receiving node was already connected.
         if (_input != null && _input.HasOutputConnected()) {
-            _oldNodeOutput = _input.OutputConnection;
+            _oldConnectedOutput = _input.OutputConnection;
         }
 
         // Check if the origin node already had inputs
         if (!_output.ParentNode.bCanHaveMultipleOutputs && _output.InputCount > 0) {
-            _oldOriginInputs = _output.Inputs.ToList();
+            _oldConnectedInputs = _output.Inputs.ToList();
         }
     }
 }

@@ -19,9 +19,7 @@ public class EditorInputKnob : EditorKnob {
 
     public void Disconnect()
     {
-        if (HasOutputConnected()) {
-            _connectedOutput = null;
-        }
+        _connectedOutput = null;
     }
 
     public bool HasOutputConnected()

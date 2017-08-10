@@ -8,8 +8,8 @@ public class DeleteNodeAction : UndoableAction
     private NodeCanvas _canvas;
     private EditorNode _nodeRemoved = null;
 
-    private EditorOutputKnob _outputKnobToInput;
-    private List<EditorInputKnob> _inputKnobsToOutput;
+    private EditorOutputKnob _oldConnectedOutput;
+    private List<EditorInputKnob> _oldConnectedInputs;
 
     public override bool Init()
     {
@@ -22,28 +22,51 @@ public class DeleteNodeAction : UndoableAction
         _nodeRemoved = manager.window.state.selectedNode;
         _canvas.Remove(_nodeRemoved);
 
-        _outputKnobToInput = _nodeRemoved.input.OutputConnection;
-        _inputKnobsToOutput = _nodeRemoved.output.Inputs.ToList();
+        _oldConnectedOutput = _nodeRemoved.input.OutputConnection;
+        _oldConnectedInputs = _nodeRemoved.output.Inputs.ToList();
 
-        _outputKnobToInput.Remove(_nodeRemoved.input);
+        disconnectOldOutput();
         _nodeRemoved.output.RemoveAll();
     }
 
     public override void Undo()
     {
         _canvas.nodes.Add(_nodeRemoved);
-        _outputKnobToInput.Add(_nodeRemoved.input);
-
-        foreach (EditorInputKnob input in _inputKnobsToOutput) {
-            _nodeRemoved.output.Add(input);
-        }
+        reconnectOldConnections();
     }
 
     public override void Redo()
     {
         _canvas.Remove(_nodeRemoved);
+        disconnectOldConnections();
+    }
 
-        _outputKnobToInput.Remove(_nodeRemoved.input);
+    private void disconnectOldConnections()
+    {
+        disconnectOldOutput();
         _nodeRemoved.output.RemoveAll();
+    }
+
+    private void reconnectOldConnections()
+    {
+        reconnectOldOutput();
+        
+        foreach (EditorInputKnob input in _oldConnectedInputs) {
+            _nodeRemoved.output.Add(input);
+        }
+    }
+
+    private void disconnectOldOutput()
+    {
+        if (_oldConnectedOutput != null) {
+            _oldConnectedOutput.Remove(_nodeRemoved.input);
+        }
+    }
+
+    private void reconnectOldOutput()
+    {
+        if (_oldConnectedOutput != null) {
+            _oldConnectedOutput.Add(_nodeRemoved.input);
+        }
     }
 }
