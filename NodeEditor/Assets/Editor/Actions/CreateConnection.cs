@@ -25,7 +25,17 @@ public class CreateConnection : MultiStageAction
     public override void Undo()
     {
         _output.Remove(_input);
+        reconnectOldConnections();
+    }
 
+    public override void Redo()
+    {
+        removeOldConnections();
+        _output.Add(_input);
+    }
+
+    private void reconnectOldConnections()
+    {
         //  Re-connect old connections
         if (_oldNodeOutput != null) {
             _oldNodeOutput.Add(_input);
@@ -38,7 +48,7 @@ public class CreateConnection : MultiStageAction
         }
     }
 
-    public override void Redo()
+    private void removeOldConnections()
     {
         // Remove old connections
         if (_oldNodeOutput != null) {
@@ -48,8 +58,6 @@ public class CreateConnection : MultiStageAction
         if (_oldOriginInputs != null) {
             _output.RemoveAll();
         }
-
-        _output.Add(_input);
     }
 
     public override void OnActionStart()
@@ -57,20 +65,17 @@ public class CreateConnection : MultiStageAction
         _output = manager.window.state.selectedOutput;
     }
 
-    public override void OnActionEnd()
+    public override bool OnActionEnd()
     {
         manager.window.state.selectedOutput = null;
         manager.window.editor.OnMouseOverNode_OrInput((node) => { _input = node.input; });
-    }
 
-    public override bool ValidateActionEnd()
-    {
         // Make the connection.
-        if (_input != null) {
+        if (_input != null && _output.CanConnectInput(_input)) {
 
             cacheOldConnections();
-            Redo();
-            return true;
+            removeOldConnections();
+            return _output.Add(_input);
         }
 
         return false;

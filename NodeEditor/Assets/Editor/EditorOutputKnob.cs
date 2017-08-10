@@ -21,27 +21,62 @@ public class EditorOutputKnob : EditorKnob {
         get { return _inputs.Count; }
     }
 
-    public void Add(EditorInputKnob input)
+    /// <summary>
+    /// Returns true if the connection was added successfully.
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public bool Add(EditorInputKnob input)
     {
-        // the input cannot be connected to anything.
-        if (input.HasOutputConnected()) {
-
-            // Inputs need to be properly handled by the Action system.
-            // So it works with undo.
-            Debug.LogWarning("Cannot add an input that is already connected");
-            return;
+        if (!CanConnectInput(input)) {
+            return false;
         }
 
-        // Avoid connecting when it is already connected.
-        if (input.OutputConnection == this) {
-            Debug.LogWarning("Already Connected");
-            return;
+        // The input cannot be connected to anything.
+        // This test is not inside the CanConnectInput() because
+        // an action can remove the old connections automatically to make it
+        // easier for the user to change connections between nodes.
+        if (input.HasOutputConnected()) {
+
+            // Changes to the inputs need to be properly handled by the Action system,
+            // so it works with undo.
+            Debug.LogWarning("Cannot add an input that is already connected");
+            return false;
         }
 
         input.Connect(this);
         _inputs.Add(input);
 
         parentNode.OnNewInputConnection(input);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tests to see if the output can be connected to the input.
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public bool CanConnectInput(EditorInputKnob input)
+    {
+        if (input == null) {
+            Debug.LogError("Attempted to add a null input.");
+            return false;
+        }
+
+        // Avoid self-connecting
+        if (input == parentNode.input) {
+            Debug.LogWarning("Cannot self connect.");
+            return false;
+        }
+
+        // Avoid connecting when it is already connected.
+        if (input.OutputConnection == this) {
+            Debug.LogWarning("Already Connected");
+            return false;
+        }
+
+        return true;
     }
 
     public void Remove(EditorInputKnob input)

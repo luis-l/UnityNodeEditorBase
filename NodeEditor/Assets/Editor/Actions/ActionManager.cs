@@ -83,11 +83,8 @@ public class ActionManager {
             return;
         }
 
-        // Finish up the action before we do any sort of validation.
-        _activeMultiAction.OnActionEnd();
-
         // We check if the action ended properly so it can be stored in undo.
-        if (_activeMultiAction.ValidateActionEnd()) {
+        if (_activeMultiAction.OnActionEnd()) {
 
             _redoStack.Clear();
             _undoStack.Push(_activeMultiAction);

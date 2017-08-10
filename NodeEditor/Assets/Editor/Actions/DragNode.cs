@@ -31,8 +31,9 @@ public class DragNode : MultiStageAction
         _startDragPos = _draggingNode.bodyRect.position;
     }
 
-    public override void OnActionEnd()
+    public override bool OnActionEnd()
     {
         _endDragPos = _draggingNode.bodyRect.position;
+        return true;
     }
 }
