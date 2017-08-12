@@ -52,15 +52,11 @@ public class TextureLib
 
     public static Texture2D GetTexture(string name)
     {
-        if (name == null) {
-            Debug.LogError("The texture: " + name + " is not loaded in the Bonsai Resources texture library.");
-            return null;
-        }
-
         if (_textures.ContainsKey(name)) {
             return _textures[name];
         }
 
+        Debug.LogError(name + " is not loaded in the texture library.");
         return null;
     }
 
