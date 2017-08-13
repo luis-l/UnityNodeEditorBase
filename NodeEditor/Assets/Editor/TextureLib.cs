@@ -12,7 +12,7 @@ using UnityEditor;
 public class TextureLib
 {
     public const string kStandardTexturesFolder = "NodeEditorTextures";
-    public enum TexType { PNG, JPEG };
+    public enum TexType { PNG, JPEG, BMP };
 
     private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
 
@@ -23,6 +23,7 @@ public class TextureLib
         LoadTexture("UnityLogo");
         LoadTexture("GrayGradient");
         LoadTexture("Grid");
+        LoadTexture("Circle");
     }
 
     public static void LoadTexture(string name, TexType type = TexType.PNG)
@@ -45,6 +46,7 @@ public class TextureLib
         switch (type) {
             case TexType.PNG: return ".png";
             case TexType.JPEG: return ".jpg";
+            case TexType.BMP: return ".bmp";
         }
 
         return "";

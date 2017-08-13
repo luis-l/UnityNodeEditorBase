@@ -16,7 +16,8 @@ public class NodeEditor
     private NodeEditorWindow _window;
 
     private Texture2D _gridTex;
-    private Texture2D _nodeBaseTex;
+    private Texture2D _knobTex;
+    private Texture2D _backTex;
 
     // To keep track of zooming.
     private Vector2 _zoomAdjustment;
@@ -26,7 +27,9 @@ public class NodeEditor
         TextureLib.LoadStandardTextures();
 
         _gridTex = TextureLib.GetTexture("Grid");
-        _nodeBaseTex = TextureLib.GetTexture("GrayGradient");
+        _knobTex = TextureLib.GetTexture("Circle");
+        _backTex = TextureLib.GetTexture("GrayGradient");
+
         _window = w;
     }
 
@@ -79,43 +82,33 @@ public class NodeEditor
     private void drawNodes()
     {
         foreach (EditorNode node in canvas.nodes) {
-            drawKnobs(node);
             drawNode(node);
+            drawKnobs(node);
         }
     }
 
     private void drawKnobs(EditorNode node)
     {
-        var bodyRect = node.bodyRect;
-        var output = node.output;
-        var input = node.input;
+        float left = node.bodyRect.xMin;
+        float right = node.bodyRect.xMax;
+        float top = node.bodyRect.yMin;
 
-        if (input != null) {
-
-            // Top / Down
-            // float x = bodyRect.x + (bodyRect.width - input.bodyRect.width) / 2f;
-            // float y = bodyRect.y - input.bodyRect.height;
-
-            // Left / Right
-            float x = bodyRect.x - input.bodyRect.width;
-            float y = bodyRect.y + (bodyRect.height - input.bodyRect.height) / 2f;
-
-            input.bodyRect.position = new Vector2(x, y);
+        float yKnob = node.HeaderTop;
+        
+        foreach (var input in node.Inputs) {
+            input.bodyRect.center = new Vector2(left, yKnob);
             drawKnob(input);
+
+            yKnob += EditorNode.kKnobOffset;
         }
 
-        if (output != null) {
+        yKnob = node.HeaderTop;
 
-            // Top / Down
-            // float x = bodyRect.x + (bodyRect.width - output.bodyRect.width) / 2f;
-            // float y = bodyRect.y + bodyRect.height;
-
-            // Left / Right
-            float x = bodyRect.x + bodyRect.width;
-            float y = bodyRect.y + (bodyRect.height - input.bodyRect.height) / 2f;
-
-            output.bodyRect.position = new Vector2(x, y);
+        foreach (var output in node.Outputs) {
+            output.bodyRect.center = new Vector2(right, yKnob);
             drawKnob(output);
+
+            yKnob += EditorNode.kKnobOffset;
         }
     }
 
@@ -125,17 +118,18 @@ public class NodeEditor
         var screenRect = knob.bodyRect;
         screenRect.position = CanvasToScreenSpace(screenRect.position);
 
-        GUI.DrawTexture(screenRect, _nodeBaseTex);
+        GUI.DrawTexture(screenRect, _knobTex);
     }
 
     private void drawConnections()
     {
         foreach (EditorNode node in canvas.nodes) {
 
-            if (node.output != null) {
-                foreach (EditorInputKnob input in node.output.Inputs) {
+            foreach (var output in node.Outputs) {
 
-                    Vector2 start = CanvasToScreenSpace(node.output.bodyRect.center);
+                foreach (EditorInputKnob input in output.Inputs) {
+
+                    Vector2 start = CanvasToScreenSpace(output.bodyRect.center);
                     Vector2 end = CanvasToScreenSpace(input.bodyRect.center);
 
                     DrawBezier(start, end, Color.white);
@@ -308,13 +302,12 @@ public class NodeEditor
     {
         foreach (var node in canvas.nodes) {
 
-            if (node.output == null) {
-                continue;
-            }
+            foreach (var output in node.Outputs) {
 
-            if (IsUnderMouse(node.output.bodyRect)) {
-                callback(node.output);
-                return true;
+                if (IsUnderMouse(output.bodyRect)) {
+                    callback(output);
+                    return true;
+                }
             }
         }
 
@@ -330,13 +323,12 @@ public class NodeEditor
     {
         foreach (var node in canvas.nodes) {
 
-            if (node.input == null) {
-                continue;
-            }
+            foreach (var input in node.Inputs) {
 
-            if (IsUnderMouse(node.input.bodyRect)) {
-                callback(node.input);
-                return true;
+                if (IsUnderMouse(input.bodyRect)) {
+                    callback(input);
+                    return true;
+                }
             }
         }
 
@@ -352,12 +344,20 @@ public class NodeEditor
     {
         foreach (var node in canvas.nodes) {
 
-            bool bCondition = IsUnderMouse(node.bodyRect) ||
-                (node.input != null && IsUnderMouse(node.input.bodyRect));
-
-            if (bCondition) {
+            if (IsUnderMouse(node.bodyRect)) {
                 callback(node);
                 return true;
+            }
+
+            // Check inputs
+            else {
+
+                foreach (var input in node.Inputs) {
+                    if (IsUnderMouse(input.bodyRect)) {
+                        callback(node);
+                        return true;
+                    }
+                }
             }
         }
 
@@ -376,7 +376,7 @@ public class NodeEditor
         {
             if (_backgroundStyle == null) {
                 _backgroundStyle = new GUIStyle(GUI.skin.box);
-                _backgroundStyle.normal.background = _nodeBaseTex;
+                _backgroundStyle.normal.background = _backTex;
             }
 
             return _backgroundStyle;

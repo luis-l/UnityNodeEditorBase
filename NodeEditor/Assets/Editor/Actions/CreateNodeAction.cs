@@ -13,6 +13,13 @@ public class CreateNodeAction : UndoableAction
         _nodeCreated = _canvas.CreateBaseNode();
 
         _nodeCreated.bodyRect.position = manager.window.state.lastClickedPosition;
+
+        _nodeCreated.AddInput();
+        _nodeCreated.AddInput();
+
+        _nodeCreated.AddOutput();
+        _nodeCreated.AddOutput();
+        _nodeCreated.AddOutput();
     }
 
     public override void Undo()

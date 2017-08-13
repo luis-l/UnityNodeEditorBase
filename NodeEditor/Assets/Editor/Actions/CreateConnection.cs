@@ -7,7 +7,6 @@ using UnityEditor;
 
 public class CreateConnection : MultiStageAction
 {
-
     private EditorInputKnob _input;
     private EditorOutputKnob _output;
 
@@ -68,7 +67,7 @@ public class CreateConnection : MultiStageAction
     public override bool OnActionEnd()
     {
         manager.window.state.selectedOutput = null;
-        manager.window.editor.OnMouseOverNode_OrInput((node) => { _input = node.input; });
+        manager.window.editor.OnMouseOverInput((input) => { _input = input; });
 
         // Make the connection.
         if (_input != null && _output.CanConnectInput(_input)) {

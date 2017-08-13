@@ -3,10 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/// <summary>
+/// The visual representation of a logic unit such as an object or function.
+/// </summary>
 public class EditorNode
 {
-
     public static readonly Vector2 kDefaultSize = new Vector2(100f, 80f);
+    
+    /// <summary>
+    /// The space reserved between knobs.
+    /// </summary>
+    public const float kKnobOffset = 15f;
+
+    /// <summary>
+    /// The space reserved for the header (title) of the node.
+    /// </summary>
+    public const float kHeaderHeight = 15f;
 
     /// <summary>
     /// The rect of the node in canvas space.
@@ -25,13 +37,13 @@ public class EditorNode
     /// </summary>
     public const float resizePaddingX = 20f;
 
+    public readonly bool bCanHaveMultipleOutputs;
+
+    private List<EditorOutputKnob> _outputs;
+    private List<EditorInputKnob> _inputs;
+
     private GUIStyle _iconNameStyle;
     private GUIContent _iconNameContent;
-
-    public readonly EditorOutputKnob output;
-    public readonly EditorInputKnob input;
-
-    public readonly bool bCanHaveMultipleOutputs;
 
     public EditorNode(string nodeName, Texture2D icon, Vector2 size, bool canHaveMultipleOuts = true)
     {
@@ -39,10 +51,26 @@ public class EditorNode
         iconTex = icon;
         bodyRect.size = size;
 
-        output = new EditorOutputKnob(this);
-        input = new EditorInputKnob(this);
+        _outputs = new List<EditorOutputKnob>();
+        _inputs = new List<EditorInputKnob>();
 
         bCanHaveMultipleOutputs = canHaveMultipleOuts;
+    }
+
+    public EditorInputKnob AddInput()
+    {
+        var input = new EditorInputKnob(this);
+        _inputs.Add(input);
+
+        return input;
+    }
+
+    public EditorOutputKnob AddOutput()
+    {
+        var output = new EditorOutputKnob(this);
+        _outputs.Add(output);
+
+        return output;
     }
 
     /// <summary>
@@ -56,6 +84,24 @@ public class EditorNode
     /// </summary>
     /// <param name="addedInput"></param>
     public virtual void OnNewInputConnection(EditorInputKnob addedInput) { }
+
+    public IEnumerable<EditorOutputKnob> Outputs
+    {
+        get { return _outputs; }
+    }
+
+    public IEnumerable<EditorInputKnob> Inputs
+    {
+        get { return _inputs; }
+    }
+
+    /// <summary>
+    /// Get the Y value of the top header.
+    /// </summary>
+    public float HeaderTop
+    {
+        get { return bodyRect.yMin + kHeaderHeight; }
+    }
 
     #region Styles and Contents
 

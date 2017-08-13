@@ -1,4 +1,5 @@
 ﻿
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -65,7 +66,7 @@ public class EditorOutputKnob : EditorKnob {
         }
 
         // Avoid self-connecting
-        if (input == parentNode.input) {
+        if (parentNode.Inputs.Contains(input)) {
             Debug.LogWarning("Cannot self connect.");
             return false;
         }
