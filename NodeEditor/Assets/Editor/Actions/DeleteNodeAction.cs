@@ -96,7 +96,7 @@ public class DeleteNodeAction : UndoableAction
         foreach (OutputToInputsPair outInsPair in _oldConnectedInputs) {
 
             EditorOutputKnob output = outInsPair.item1;
-            IEnumerable<EditorInputKnob> inputs = outInsPair.item2;
+            List<EditorInputKnob> inputs = outInsPair.item2;
 
             foreach (var input in inputs) {
                 output.Add(input);
