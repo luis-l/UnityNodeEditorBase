@@ -5,10 +5,13 @@ using UnityEngine;
 
 public class EditorOutputKnob : EditorKnob {
 
+    public readonly bool bCanHaveMultipleConnections;
+
     private List<EditorInputKnob> _inputs;
 
-    public EditorOutputKnob(EditorNode parent) : base(parent)
+    public EditorOutputKnob(EditorNode parent, bool canHaveMultipleConnections = true) : base(parent)
     {
+        bCanHaveMultipleConnections = canHaveMultipleConnections;
         _inputs = new List<EditorInputKnob>();
     }
 
