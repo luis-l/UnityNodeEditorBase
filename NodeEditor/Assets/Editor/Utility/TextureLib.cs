@@ -21,8 +21,6 @@ public class TextureLib
     {
         _textures.Clear();
 
-        LoadTexture("UnityLogo");
-        LoadTexture("GrayGradient");
         LoadTexture("Grid");
         LoadTexture("Circle");
         LoadTexture("Square");
