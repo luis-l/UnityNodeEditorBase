@@ -10,6 +10,8 @@ public abstract class EditorKnob {
     public Rect bodyRect = new Rect(Vector2.zero, kMinSize);
     public string name = "knob";
 
+    public System.Func<object> getValue;
+
     protected EditorNode parentNode;
     public EditorKnob(EditorNode parentNode)
     {
@@ -46,4 +48,18 @@ public abstract class EditorKnob {
     /// </summary>
     /// <returns></returns>
     public abstract float GetNodeAnchor();
+
+    /// <summary>
+    /// Attempts to get the value of the specified type.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public T GetValue<T>()
+    {
+        if (getValue != null) {
+            return (T)getValue();
+        }
+
+        return default(T);
+    }
 }

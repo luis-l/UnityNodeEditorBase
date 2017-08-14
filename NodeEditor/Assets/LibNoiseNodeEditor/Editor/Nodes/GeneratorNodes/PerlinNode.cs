@@ -22,10 +22,11 @@ public class PerlinNode : EditorNode
 
         var noiseOut = AddOutput();
         noiseOut.name = "Output";
+        noiseOut.getValue = () => { return _noise; };
 
         FitKnobs();
 
-        bodyRect.height += 60f;
+        bodyRect.height += 75f;
         bodyRect.width = 150f;
     }
 
@@ -33,6 +34,7 @@ public class PerlinNode : EditorNode
     {
         _noise.OctaveCount = EditorGUILayout.IntField("Octaves", _noise.OctaveCount);
         _noise.Persistence = EditorGUILayout.DoubleField("Persistence", _noise.Persistence);
+        _noise.Frequency = EditorGUILayout.DoubleField("Frequency", _noise.Frequency);
         _noise.Lacunarity = EditorGUILayout.DoubleField("Lacunarity", _noise.Lacunarity);
     }
 }

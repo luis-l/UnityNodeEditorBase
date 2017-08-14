@@ -104,12 +104,19 @@ public class ActionTriggerSystem
             _manager.RunUndoableAction<CreateNodeAction>();
         };
 
+        Action createTexOut = () =>
+        {
+            _manager.window.state.typeToCreate = typeof(OutputTexture2D);
+            _manager.RunUndoableAction<CreateNodeAction>();
+        };
+
         Pair<string, Action>[] canvasContext = 
         { 
             ContextItem("Perlin", createPerlin),
             ContextItem("Voronoi", createVoronoi),
             ContextItem("Select", createSelect),
-            ContextItem("Curve", createCurve)
+            ContextItem("Curve", createCurve),
+            ContextItem("Texture Out", createTexOut)
         };
 
         var canvasTrigger = Create<ContextTrigger>().Build(canvasContext).EventOnly(EventType.ContextClick);

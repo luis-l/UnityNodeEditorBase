@@ -101,6 +101,8 @@ public class EditorNode
         EditorGUIUtility.labelWidth = kBodyLabelWidth;
 
         // Cache the old label style.
+        // Do this first before changing the EditorStyles.label style.
+        // So the original values are kept.
         var oldLabelStyle = NodeEditor.UnityLabelStyle;
 
         // Setup new values for the label style.

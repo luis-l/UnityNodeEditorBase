@@ -376,6 +376,11 @@ public class NodeEditor
     #region Styles
 
     private static GUIStyle _unityLabelStyle;
+
+    /// <summary>
+    /// Caches the default EditorStyle.
+    /// There is a strange bug with it being overriden when opening an Animation window.
+    /// </summary>
     public static GUIStyle UnityLabelStyle
     {
         get
