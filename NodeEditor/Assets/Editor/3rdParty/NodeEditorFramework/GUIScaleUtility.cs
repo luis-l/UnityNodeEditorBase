@@ -33,8 +33,6 @@ namespace NodeEditorFramework.Utilities
         private static List<Matrix4x4> GUIMatrices;
         private static List<bool> adjustedGUILayout;
 
-        private static bool isEditorWindow;
-
         #region Init
 
         public static void CheckInit()
@@ -79,18 +77,6 @@ namespace NodeEditorFramework.Utilities
             GUIMatrices = new List<Matrix4x4>();
             adjustedGUILayout = new List<bool>();
 
-            // Sometimes, strange errors pop up (related to Mac?), which we try to catch and enable a compability Mode no supporting zooming in groups
-            /*try
-            {
-                topmostRectDelegate.Invoke ();
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning ("GUIScaleUtility cannot run on this system! Compability mode enabled. For you that means you're not able to use the Node Editor inside more than one group:( Please PM me (Seneral @UnityForums) so I can figure out what causes this! Thanks!");
-                Debug.Log (e.Message);
-                compabilityMode = true;
-            }*/
-
             initiated = true;
         }
 
@@ -98,27 +84,24 @@ namespace NodeEditorFramework.Utilities
 
         #region Scale Area
 
-        public static Vector2 getCurrentScale { get { return new Vector2(1 / GUI.matrix.GetColumn(0).magnitude, 1 / GUI.matrix.GetColumn(1).magnitude); } }
-
         /// <summary>
         /// Begins a scaled local area. 
         /// Returns vector to offset GUI controls with to account for zooming to the pivot. 
         /// Using adjustGUILayout does that automatically for GUILayout rects. Theoretically can be nested!
         /// </summary>
-        public static Vector2 BeginScale(ref Rect rect, Vector2 zoomPivot, float zoom, bool IsEditorWindow, bool adjustGUILayout)
+        public static Vector2 BeginScale(ref Rect rect, Vector2 zoomPivot, float zoom, bool adjustGUILayout)
         {
-            isEditorWindow = IsEditorWindow;
-
             Rect screenRect;
-            if (compabilityMode) { // In compability mode, we will assume only one top group and do everything manually, not using reflected calls (-> practically blind)
+            if (compabilityMode) { 
+                
+                // In compability mode, we will assume only one top group and do everything manually, not using reflected calls (-> practically blind)
                 GUI.EndGroup();
                 screenRect = rect;
-#if UNITY_EDITOR
-                if (isEditorWindow)
-                    screenRect.y += 23;
-#endif
             }
-            else { // If it's supported, we take the completely generic way using reflected calls
+
+            else { 
+
+                // If it's supported, we take the completely generic way using reflected calls
                 GUIScaleUtility.BeginNoClip();
                 screenRect = GUIScaleUtility.GUIToScaledSpace(rect);
             }
@@ -160,11 +143,13 @@ namespace NodeEditorFramework.Utilities
             // Set last matrix and clipping group
             if (GUIMatrices.Count == 0 || adjustedGUILayout.Count == 0)
                 throw new UnityException("GUIScaleUtility: You are ending more scale regions than you are beginning!");
+            
             GUI.matrix = GUIMatrices[GUIMatrices.Count - 1];
             GUIMatrices.RemoveAt(GUIMatrices.Count - 1);
 
             // End GUILayout zoomPosAdjustment
             if (adjustedGUILayout[adjustedGUILayout.Count - 1]) {
+
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
@@ -173,13 +158,15 @@ namespace NodeEditorFramework.Utilities
             // End the scaled group
             GUI.EndGroup();
 
-            if (compabilityMode) { // In compability mode, we don't know the previous group rect, but as we cannot use top groups there either way, we restore the screen group
-                if (isEditorWindow) // We're in an editor window
-                    GUI.BeginClip(new Rect(0, 23, Screen.width, Screen.height - 23));
-                else
-                    GUI.BeginClip(new Rect(0, 0, Screen.width, Screen.height));
+            if (compabilityMode) {
+
+                // In compability mode, we don't know the previous group rect, but as we cannot use top groups there either way, we restore the screen group
+                GUI.BeginClip(new Rect(0, 23, Screen.width, Screen.height - 23));
             }
-            else { // Else, restore the clips (groups)
+
+            else { 
+                
+                // Else, restore the clips (groups)
                 GUIScaleUtility.RestoreClips();
             }
         }

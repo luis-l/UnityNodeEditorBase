@@ -8,7 +8,7 @@ using LibNoise.Generator;
 
 public class PerlinNode : EditorNode
 {
-    private Perlin noise = new Perlin();
+    private Perlin _noise = new Perlin();
 
     public PerlinNode()
     {
@@ -25,14 +25,14 @@ public class PerlinNode : EditorNode
 
         FitKnobs();
 
-        bodyRect.height += 65f;
+        bodyRect.height += 60f;
         bodyRect.width = 150f;
     }
 
     public override void OnBodyGUI()
     {
-        noise.OctaveCount = EditorGUILayout.IntField("Octaves", noise.OctaveCount);
-        noise.Persistence = EditorGUILayout.DoubleField("Persistence", noise.Persistence);
-        noise.Lacunarity = EditorGUILayout.DoubleField("Lacunarity", noise.Lacunarity);
+        _noise.OctaveCount = EditorGUILayout.IntField("Octaves", _noise.OctaveCount);
+        _noise.Persistence = EditorGUILayout.DoubleField("Persistence", _noise.Persistence);
+        _noise.Lacunarity = EditorGUILayout.DoubleField("Lacunarity", _noise.Lacunarity);
     }
 }

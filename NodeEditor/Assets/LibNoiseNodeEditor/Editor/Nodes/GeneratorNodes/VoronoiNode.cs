@@ -4,7 +4,7 @@ using LibNoise.Generator;
 
 public class VoronoiNode : EditorNode
 {
-    private Voronoi noise = new Voronoi();
+    private Voronoi _noise = new Voronoi();
 
     public VoronoiNode()
     {
@@ -21,14 +21,14 @@ public class VoronoiNode : EditorNode
 
         FitKnobs();
 
-        bodyRect.height += 65f;
+        bodyRect.height += 60f;
         bodyRect.width = 150f;
     }
 
     public override void OnBodyGUI()
     {
-        noise.Frequency = EditorGUILayout.DoubleField("Frequency", noise.Frequency);
-        noise.Displacement = EditorGUILayout.DoubleField("Displacement", noise.Displacement);
-        noise.UseDistance = EditorGUILayout.Toggle("Use Distance", noise.UseDistance);
+        _noise.Frequency = EditorGUILayout.DoubleField("Frequency", _noise.Frequency);
+        _noise.Displacement = EditorGUILayout.DoubleField("Displacement", _noise.Displacement);
+        _noise.UseDistance = EditorGUILayout.Toggle("Use Distance", _noise.UseDistance);
     }
 }

@@ -55,7 +55,7 @@ public class NodeEditor
         Rect canvasRect = _window.Size;
         var center = canvasRect.size / 2f;
 
-        _zoomAdjustment = GUIScaleUtility.BeginScale(ref canvasRect, center, canvas.ZoomScale, true, false);
+        _zoomAdjustment = GUIScaleUtility.BeginScale(ref canvasRect, center, canvas.ZoomScale, false);
 
         drawConnectionPreview();
         drawConnections();

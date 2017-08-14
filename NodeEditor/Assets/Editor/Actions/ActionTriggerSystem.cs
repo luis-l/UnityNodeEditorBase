@@ -92,10 +92,24 @@ public class ActionTriggerSystem
             _manager.RunUndoableAction<CreateNodeAction>();
         };
 
+        Action createSelect = () =>
+        {
+            _manager.window.state.typeToCreate = typeof(SelectNode);
+            _manager.RunUndoableAction<CreateNodeAction>();
+        };
+
+        Action createCurve = () =>
+        {
+            _manager.window.state.typeToCreate = typeof(CurveNode);
+            _manager.RunUndoableAction<CreateNodeAction>();
+        };
+
         Pair<string, Action>[] canvasContext = 
         { 
             ContextItem("Perlin", createPerlin),
-            ContextItem("Voronoi", createVoronoi)
+            ContextItem("Voronoi", createVoronoi),
+            ContextItem("Select", createSelect),
+            ContextItem("Curve", createCurve)
         };
 
         var canvasTrigger = Create<ContextTrigger>().Build(canvasContext).EventOnly(EventType.ContextClick);
