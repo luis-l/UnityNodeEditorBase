@@ -37,10 +37,19 @@ public class EditorInputKnob : EditorKnob {
         var style = new GUIStyle();
         
         style.fixedHeight = kMinSize.y + EditorNode.kKnobOffset;
-        style.alignment = TextAnchor.UpperLeft;
+        style.alignment = TextAnchor.MiddleLeft;
         style.normal.textColor = Color.white * 0.9f;
         style.padding.left = (int)kMinHalfSize.x + 5;
 
         return style;
+    }
+
+    /// <summary>
+    /// The input is anchored at the left side of the node.
+    /// </summary>
+    /// <returns></returns>
+    public override float GetNodeAnchor()
+    {
+        return parentNode.bodyRect.xMin;
     }
 }

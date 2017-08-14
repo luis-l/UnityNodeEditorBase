@@ -19,7 +19,7 @@ public class NodeEditor
     private Texture2D _knobTex;
     private Texture2D _backTex;
 
-    private Color _backColor;
+    public Color backColor;
     private Color _knobColor;
 
     // To keep track of zooming.
@@ -27,7 +27,7 @@ public class NodeEditor
 
     public NodeEditor(NodeEditorWindow w)
     {
-        _backColor = ColorExtensions.From255(59, 62, 74);
+        backColor = ColorExtensions.From255(59, 62, 74);
         _knobColor = ColorExtensions.From255(126, 186, 255);
         
         TextureLib.LoadStandardTextures();
@@ -97,30 +97,12 @@ public class NodeEditor
 
     private void drawKnobs(EditorNode node)
     {
-        float left = node.bodyRect.xMin;
-        float right = node.bodyRect.xMax;
-        float top = node.bodyRect.yMin;
-
-        // Draw the inputs.
-        float yKnob = node.HeaderTop + EditorKnob.kMinHalfSize.y;
-
         foreach (var input in node.Inputs) {
-
-            input.bodyRect.center = new Vector2(left, yKnob);
             drawKnob(input);
-
-            yKnob += EditorNode.kKnobOffset + EditorKnob.kMinSize.y;
         }
 
-        // Draw the outputs.
-        yKnob = node.HeaderTop + EditorKnob.kMinHalfSize.y;
-
         foreach (var output in node.Outputs) {
-
-            output.bodyRect.center = new Vector2(right, yKnob);
             drawKnob(output);
-
-            yKnob += EditorNode.kKnobOffset + EditorKnob.kMinSize.y;
         }
     }
 
@@ -167,7 +149,7 @@ public class NodeEditor
         screenRect.position = CanvasToScreenSpace(screenRect.position);
 
         // The node contents are grouped together within the node body.
-        BeginGroup(screenRect, backgroundStyle, _backColor);
+        BeginGroup(screenRect, backgroundStyle, backColor);
         
         // Make the body of node local to the group coordinate space.
         Rect localRect = node.bodyRect;
@@ -176,42 +158,10 @@ public class NodeEditor
         // Draw the contents inside the node body, automatically laidout.
         GUILayout.BeginArea(localRect, GUIStyle.none);
 
-        // Draw header
-        GUILayout.Box(node.name, node.HeaderStyle);
-
-        drawKnobNames(node);
+        node.OnGUI();
 
         GUILayout.EndArea();
         GUI.EndGroup();
-    }
-
-    private void drawKnobNames(EditorNode node)
-    {
-        int inputCount = node.InputCount;
-        int outputCount = node.OutputCount;
-
-        int maxCount = (int)Mathf.Max(inputCount, outputCount);
-
-        GUILayout.BeginVertical();
-
-        for (int i = 0; i < maxCount; ++i) {
-
-            GUILayout.BeginHorizontal();
-
-            if (i < inputCount) {
-                var input = node.GetInput(i);
-                GUILayout.Label(input.name, input.GetStyle());
-            }
-
-            if (i < outputCount) {
-                var output = node.GetOutput(i);
-                GUILayout.Label(output.name, output.GetStyle());
-            }
-
-            GUILayout.EndHorizontal();
-        }
-
-        GUILayout.EndVertical();
     }
 
     /// <summary>

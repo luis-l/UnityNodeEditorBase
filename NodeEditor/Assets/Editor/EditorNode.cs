@@ -46,6 +46,57 @@ public class EditorNode
         bodyRect.size = size;
     }
 
+    public virtual void OnGUI()
+    {
+        OnNodeHeaderGUI();
+        OnNodeBodyGUI();
+        OnKnobGUI();
+    }
+
+    /// <summary>
+    /// Renders the knob names. By default, after the header.
+    /// </summary>
+    public virtual void OnKnobGUI()
+    {
+        int inputCount = _inputs.Count;
+        int outputCount = _outputs.Count;
+
+        int maxCount = (int)Mathf.Max(inputCount, outputCount);
+
+        // The entire knob section is stacked rows of inputs and outputs.
+        GUILayout.BeginVertical();
+
+        for (int i = 0; i < maxCount; ++i) {
+
+            GUILayout.BeginHorizontal();
+
+            // Render the knob layout horizontally.
+            if (i < inputCount) _inputs[i].OnGUI(i);
+            if (i < outputCount) _outputs[i].OnGUI(i);
+
+            GUILayout.EndHorizontal();
+        }
+
+        GUILayout.EndVertical();
+    }
+
+    /// <summary>
+    /// Render the title/header of the node. By default, renders on top of the node.
+    /// </summary>
+    public virtual void OnNodeHeaderGUI()
+    {
+        // Draw header
+        GUILayout.Box(name, HeaderStyle);
+    }
+
+    /// <summary>
+    /// Draws the body of the node. By default, after the knob names.
+    /// </summary>
+    public virtual void OnNodeBodyGUI()
+    {
+
+    }
+
     public EditorInputKnob AddInput()
     {
         var input = new EditorInputKnob(this);
@@ -143,7 +194,8 @@ public class EditorNode
 
         float heightRequired = totalKnobsHeight + totalOffsetHeight + kHeaderHeight;
 
-        bodyRect.height = heightRequired;
+        // Add some extra height at the end.
+        bodyRect.height = heightRequired + kHeaderHeight / 2f;
     }
 
     #endregion

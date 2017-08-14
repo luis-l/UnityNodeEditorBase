@@ -107,10 +107,19 @@ public class EditorOutputKnob : EditorKnob {
         var style = new GUIStyle();
 
         style.fixedHeight = kMinSize.y + EditorNode.kKnobOffset;
-        style.alignment = TextAnchor.UpperRight;
+        style.alignment = TextAnchor.MiddleRight;
         style.normal.textColor = Color.white * 0.9f;
         style.padding.right = (int)kMinHalfSize.x + 5;
 
         return style;
+    }
+
+    /// <summary>
+    /// The output is anchored at the right side of the node.
+    /// </summary>
+    /// <returns></returns>
+    public override float GetNodeAnchor()
+    {
+        return parentNode.bodyRect.xMax;
     }
 }

@@ -25,4 +25,21 @@ public abstract class EditorKnob {
     }
 
     public abstract GUIStyle GetStyle();
+
+    public virtual void OnGUI(int order)
+    {
+        OnNameGUI();
+
+        // Position the knobs properly for the draw pass of the knobs in the editor.
+        float yPos = parentNode.HeaderTop + order * GetStyle().fixedHeight + EditorNode.kKnobOffset;
+        bodyRect.center = new Vector2(GetNodeAnchor(), 0f);
+        bodyRect.y = yPos;
+    }
+
+    public virtual void OnNameGUI()
+    {
+        GUILayout.Label(name, GetStyle());
+    }
+
+    public abstract float GetNodeAnchor();
 }
