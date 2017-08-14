@@ -5,4 +5,4 @@ Basic editor extension functionality to get a node editor up and running. (Click
 
 
 Custom Node Rendering. This is a LibNoise port (WIP)
-![LibNoise Port Sample](https://lh5.googleusercontent.com/lxVvkY1mayvYwkpO8mlfpLGrW5EcxMi1c8xfjgUdf3pivYQXsrLNOPwJUI5wsNkWjeAco-9gDsfxnm8=w1920-h974)
+![LibNoise Port Sample](https://lh4.googleusercontent.com/NdxOZisX-2UIKeDnmZvCAbL5UcJ3FYmYCGidEmbKGQaKDe_zKJLi_QjqJ-iaJ9__F8oOwkBdj6iYmDM=w1920-h974)
