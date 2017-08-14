@@ -41,5 +41,9 @@ public abstract class EditorKnob {
         GUILayout.Label(name, GetStyle());
     }
 
+    /// <summary>
+    /// What side of the node should the knob anchor to.
+    /// </summary>
+    /// <returns></returns>
     public abstract float GetNodeAnchor();
 }

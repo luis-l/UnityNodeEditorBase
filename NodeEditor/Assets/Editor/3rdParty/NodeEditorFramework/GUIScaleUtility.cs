@@ -208,26 +208,6 @@ namespace NodeEditorFramework.Utilities
         }
 
         /// <summary>
-        /// Begins a field without the last count groups. They should be restored using RestoreClips. Can be nested!
-        /// </summary>
-        public static void MoveClipsUp(int count)
-        {
-            // Record and close all clips one by one, from bottom to top, until reached the count or hit the 'origin'
-            List<Rect> rectStackGroup = new List<Rect>();
-            Rect topMostClip = getTopRect;
-            while (topMostClip != new Rect(-10000, -10000, 40000, 40000) && count > 0) {
-                rectStackGroup.Add(topMostClip);
-                GUI.EndClip();
-                topMostClip = getTopRect;
-                count--;
-            }
-            // Store the clips appropriately
-            rectStackGroup.Reverse();
-            rectStackGroups.Add(rectStackGroup);
-            currentRectStack.AddRange(rectStackGroup);
-        }
-
-        /// <summary>
         /// Restores the clips removed in BeginNoClip or MoveClipsUp
         /// </summary>
         public static void RestoreClips()
@@ -248,65 +228,7 @@ namespace NodeEditorFramework.Utilities
 
         #endregion
 
-        #region Layout & Matrix Ignores
-
-        /// <summary>
-        /// Ignores the current GUILayout cache and begins a new one. Cannot be nested!
-        /// </summary>
-        public static void BeginNewLayout()
-        {
-            if (compabilityMode)
-                return;
-            // Will mimic a new layout by creating a new group at (0, 0). Will be restored though after ending the new Layout
-            Rect topMostClip = getTopRect;
-            if (topMostClip != new Rect(-10000, -10000, 40000, 40000))
-                GUILayout.BeginArea(new Rect(0, 0, topMostClip.width, topMostClip.height));
-            else
-                GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
-        }
-
-        /// <summary>
-        /// Ends the last GUILayout cache
-        /// </summary>
-        public static void EndNewLayout()
-        {
-            if (!compabilityMode)
-                GUILayout.EndArea();
-        }
-
-        /// <summary>
-        /// Begins an area without GUIMatrix transformations. Can be nested!
-        /// </summary>
-        public static void BeginIgnoreMatrix()
-        {
-            // Store and clean current matrix
-            GUIMatrices.Add(GUI.matrix);
-            GUI.matrix = Matrix4x4.identity;
-        }
-
-        /// <summary>
-        /// Restores last matrix ignored with BeginIgnoreMatrix
-        /// </summary>
-        public static void EndIgnoreMatrix()
-        {
-            if (GUIMatrices.Count == 0)
-                throw new UnityException("GUIScaleutility: You are ending more ignoreMatrices than you are beginning!");
-            // Read and assign previous matrix
-            GUI.matrix = GUIMatrices[GUIMatrices.Count - 1];
-            GUIMatrices.RemoveAt(GUIMatrices.Count - 1);
-        }
-
-        #endregion
-
         #region Space Transformations
-
-        /// <summary>
-        /// Scales the position around the pivot with scale
-        /// </summary>
-        public static Vector2 Scale(Vector2 pos, Vector2 pivot, Vector2 scale)
-        {
-            return Vector2.Scale(pos - pivot, scale) + pivot;
-        }
 
         /// <summary>
         /// Scales the rect around the pivot with scale
@@ -318,35 +240,6 @@ namespace NodeEditorFramework.Utilities
             return rect;
         }
 
-        /// <summary>
-        /// Transforms the position from the space aquired with BeginNoClip or MoveClipsUp to it's previous space
-        /// </summary>
-        public static Vector2 ScaledToGUISpace(Vector2 scaledPosition)
-        {
-            if (rectStackGroups == null || rectStackGroups.Count == 0)
-                return scaledPosition;
-            // Iterate through the clips and substract positions
-            List<Rect> rectStackGroup = rectStackGroups[rectStackGroups.Count - 1];
-            for (int clipCnt = 0; clipCnt < rectStackGroup.Count; clipCnt++)
-                scaledPosition -= rectStackGroup[clipCnt].position;
-            return scaledPosition;
-        }
-        /// <summary>
-        /// Transforms the rect from the space aquired with BeginNoClip or MoveClipsUp to it's previous space.
-        /// DOES NOT scale the rect, only offsets it!
-        /// </summary>
-        public static Rect ScaledToGUISpace(Rect scaledRect)
-        {
-            if (rectStackGroups == null || rectStackGroups.Count == 0)
-                return scaledRect;
-            scaledRect.position = ScaledToGUISpace(scaledRect.position);
-            return scaledRect;
-        }
-
-        /// <summary>
-        /// Transforms the position to the new space aquired with BeginNoClip or MoveClipsUp
-        /// It's way faster to call GUIToScreenSpace before modifying the space though!
-        /// </summary>
         public static Vector2 GUIToScaledSpace(Vector2 guiPosition)
         {
             if (rectStackGroups == null || rectStackGroups.Count == 0)
@@ -357,6 +250,7 @@ namespace NodeEditorFramework.Utilities
                 guiPosition += rectStackGroup[clipCnt].position;
             return guiPosition;
         }
+
         /// <summary>
         /// Transforms the rect to the new space aquired with BeginNoClip or MoveClipsUp.
         /// DOES NOT scale the rect, only offsets it!
@@ -367,35 +261,6 @@ namespace NodeEditorFramework.Utilities
             if (rectStackGroups == null || rectStackGroups.Count == 0)
                 return guiRect;
             guiRect.position = GUIToScaledSpace(guiRect.position);
-            return guiRect;
-        }
-
-        /// <summary>
-        /// Transforms the position to screen space.
-        /// You can use GUIToScaledSpace when you want to transform an old rect to the new space aquired with BeginNoClip or MoveClipsUp (slower, try to call this function before any of these two)!
-        /// ATTENTION: This does not work well when any of the top groups is negative, means extends to the top or left of the screen. You may consider to use GUIToScaledSpace then, if possible!
-        /// </summary>
-        public static Vector2 GUIToScreenSpace(Vector2 guiPosition)
-        {
-#if UNITY_EDITOR
-            if (isEditorWindow)
-                return guiPosition + getTopRectScreenSpace.position - new Vector2(0, 22);
-#endif
-            return guiPosition + getTopRectScreenSpace.position;
-        }
-
-        /// <summary>
-        /// Transforms the rect to screen space.
-        /// You can use GUIToScaledSpace when you want to transform an old rect to the new space aquired with BeginNoClip or MoveClipsUp (slower, try to call this function before any of these two)!
-        /// ATTENTION: This does not work well when any of the top groups is negative, means extends to the top or left of the screen. You may consider to use GUIToScaledSpace then, if possible!
-        /// </summary>
-        public static Rect GUIToScreenSpace(Rect guiRect)
-        {
-            guiRect.position += getTopRectScreenSpace.position;
-#if UNITY_EDITOR
-            if (isEditorWindow)
-                guiRect.y -= 22;
-#endif
             return guiRect;
         }
 
