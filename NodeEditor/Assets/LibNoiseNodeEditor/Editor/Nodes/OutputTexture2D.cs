@@ -9,6 +9,13 @@ public class OutputTexture2D : EditorNode
 
     EditorInputKnob inputNoise;
 
+    private int _texRes = 100;
+    public int Resolution
+    {
+        get { return _texRes; }
+        set { _texRes = Mathf.Clamp(value, 10, 300); }
+    }
+
     public OutputTexture2D()
     {
         inputNoise = AddInput();
@@ -17,12 +24,14 @@ public class OutputTexture2D : EditorNode
         texPreview = new Texture2D(200, 200);
 
         FitKnobs();
-        bodyRect.height += 230;
+        bodyRect.height += 245;
         bodyRect.width = 210f;
     }
 
     public override void OnBodyGUI()
     {
+        Resolution = EditorGUILayout.IntField("Resolution", Resolution);
+
         GUILayout.Box(texPreview, GUILayout.Width(texPreview.width), GUILayout.Height(texPreview.height));
 
         if (GUILayout.Button("Update")) {
@@ -41,7 +50,7 @@ public class OutputTexture2D : EditorNode
         for (int x = 0; x < texPreview.width; ++x) {
             for (int y = 0; y < texPreview.height; ++y) {
 
-                var point = new Vector3(x, y, 0f);
+                var point = new Vector3(x, y, 0f) / _texRes;
                 float value = (float)noise.GetValue(point);
 
                 value = (value + 1) / 2f;

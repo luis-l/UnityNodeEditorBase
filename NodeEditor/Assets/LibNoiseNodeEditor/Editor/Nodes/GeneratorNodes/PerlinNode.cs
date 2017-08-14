@@ -26,12 +26,13 @@ public class PerlinNode : EditorNode
 
         FitKnobs();
 
-        bodyRect.height += 75f;
+        bodyRect.height += 95f;
         bodyRect.width = 150f;
     }
 
     public override void OnBodyGUI()
     {
+        _noise.Seed = EditorGUILayout.IntField("Seed", _noise.Seed);
         _noise.OctaveCount = EditorGUILayout.IntField("Octaves", _noise.OctaveCount);
         _noise.Persistence = EditorGUILayout.DoubleField("Persistence", _noise.Persistence);
         _noise.Frequency = EditorGUILayout.DoubleField("Frequency", _noise.Frequency);
