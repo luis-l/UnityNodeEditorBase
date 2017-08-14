@@ -19,19 +19,27 @@ public class NodeEditor
     private Texture2D _knobTex;
     private Texture2D _backTex;
 
+    private Color _backColor;
+    private Color _knobColor;
+
     // To keep track of zooming.
     private Vector2 _zoomAdjustment;
 
     public NodeEditor(NodeEditorWindow w)
     {
+        _backColor = ColorExtensions.From255(49, 52, 64);
+        _knobColor = ColorExtensions.From255(126, 186, 255);
+
         TextureLib.LoadStandardTextures();
 
         _gridTex = TextureLib.GetTexture("Grid");
-        _knobTex = TextureLib.GetTexture("Circle");
-        _backTex = TextureLib.GetTexture("GrayGradient");
+        _backTex = TextureLib.GetTexture("Square");
+        _knobTex = TextureLib.GetTintTex("Circle", _knobColor);
 
         _window = w;
     }
+
+    #region Drawing
 
     public void Draw()
     {
@@ -93,22 +101,26 @@ public class NodeEditor
         float right = node.bodyRect.xMax;
         float top = node.bodyRect.yMin;
 
-        float yKnob = node.HeaderTop;
-        
+        // Draw the inputs.
+        float yKnob = node.HeaderTop + EditorKnob.kMinHalfSize.y;
+
         foreach (var input in node.Inputs) {
+
             input.bodyRect.center = new Vector2(left, yKnob);
             drawKnob(input);
 
-            yKnob += EditorNode.kKnobOffset;
+            yKnob += EditorNode.kKnobOffset + EditorKnob.kMinSize.y;
         }
 
-        yKnob = node.HeaderTop;
+        // Draw the outputs.
+        yKnob = node.HeaderTop + EditorKnob.kMinHalfSize.y;
 
         foreach (var output in node.Outputs) {
+
             output.bodyRect.center = new Vector2(right, yKnob);
             drawKnob(output);
 
-            yKnob += EditorNode.kKnobOffset;
+            yKnob += EditorNode.kKnobOffset + EditorKnob.kMinSize.y;
         }
     }
 
@@ -155,17 +167,20 @@ public class NodeEditor
         screenRect.position = CanvasToScreenSpace(screenRect.position);
 
         // The node contents are grouped together within the node body.
-        GUI.BeginGroup(screenRect, backgroundStyle);
-
+        BeginGroup(screenRect, backgroundStyle, _backColor);
+        
         // Make the body of node local to the group coordinate space.
         Rect localRect = node.bodyRect;
         localRect.position = Vector2.zero;
 
         // Draw the contents inside the node body, automatically laidout.
         GUILayout.BeginArea(localRect, GUIStyle.none);
-        GUILayout.Box(node.IconNameContent, node.IconNameStyle);
+
+        // Draw header
+        GUILayout.Box(node.name, node.HeaderStyle);
 
         GUILayout.EndArea();
+
         GUI.EndGroup();
     }
 
@@ -196,6 +211,18 @@ public class NodeEditor
     {
         Handles.DrawLine(start, end);
     }
+
+    public static void BeginGroup(Rect r, GUIStyle style, Color color)
+    {
+        var old = GUI.color;
+
+        GUI.color = color;
+        GUI.BeginGroup(r, style);
+
+        GUI.color = old;
+    }
+
+    #endregion
 
     #region Space Transformations and Mouse Utilities
 

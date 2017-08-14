@@ -26,6 +26,14 @@ public class NodeCanvas
         return node;
     }
 
+    public T CreateNode<T>() where T : EditorNode, new()
+    {
+        T node = new T();
+        nodes.Add(node);
+
+        return node;
+    }
+
     public void Remove(EditorNode node)
     {
         nodes.Remove(node);

@@ -11,6 +11,7 @@ public class EditorOutputKnob : EditorKnob {
 
     public EditorOutputKnob(EditorNode parent, bool canHaveMultipleConnections = true) : base(parent)
     {
+        name = "output";
         bCanHaveMultipleConnections = canHaveMultipleConnections;
         _inputs = new List<EditorInputKnob>();
     }

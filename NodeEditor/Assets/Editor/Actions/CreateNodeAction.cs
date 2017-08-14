@@ -20,6 +20,8 @@ public class CreateNodeAction : UndoableAction
         _nodeCreated.AddOutput();
         _nodeCreated.AddOutput();
         _nodeCreated.AddOutput();
+
+        _nodeCreated.FitKnobs();
     }
 
     public override void Undo()

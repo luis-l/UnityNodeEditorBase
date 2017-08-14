@@ -8,12 +8,12 @@ using UnityEditor;
 /// </summary>
 public class EditorNode
 {
-    public static readonly Vector2 kDefaultSize = new Vector2(100f, 80f);
-    
+    public static readonly Vector2 kDefaultSize = new Vector2(120f, 110f);
+
     /// <summary>
     /// The space reserved between knobs.
     /// </summary>
-    public const float kKnobOffset = 15f;
+    public const float kKnobOffset = 4f;
 
     /// <summary>
     /// The space reserved for the header (title) of the node.
@@ -37,24 +37,19 @@ public class EditorNode
     /// </summary>
     public const float resizePaddingX = 20f;
 
-    public readonly bool bCanHaveMultipleOutputs;
+    private List<EditorOutputKnob> _outputs = new List<EditorOutputKnob>();
+    private List<EditorInputKnob> _inputs = new List<EditorInputKnob>();
 
-    private List<EditorOutputKnob> _outputs;
-    private List<EditorInputKnob> _inputs;
+    public EditorNode()
+    {
+        bodyRect.size = kDefaultSize;
+    }
 
-    private GUIStyle _iconNameStyle;
-    private GUIContent _iconNameContent;
-
-    public EditorNode(string nodeName, Texture2D icon, Vector2 size, bool canHaveMultipleOuts = true)
+    public EditorNode(string nodeName, Texture2D icon, Vector2 size)
     {
         name = nodeName;
         iconTex = icon;
         bodyRect.size = size;
-
-        _outputs = new List<EditorOutputKnob>();
-        _inputs = new List<EditorInputKnob>();
-
-        bCanHaveMultipleOutputs = canHaveMultipleOuts;
     }
 
     public EditorInputKnob AddInput()
@@ -105,6 +100,9 @@ public class EditorNode
 
     #region Styles and Contents
 
+    private GUIStyle _iconNameStyle;
+    private GUIContent _iconNameContent;
+
     public string NiceName
     {
         get { return ObjectNames.NicifyVariableName(name); }
@@ -140,7 +138,7 @@ public class EditorNode
     {
         _iconNameStyle = new GUIStyle();
         _iconNameStyle.normal.textColor = Color.white;
-        _iconNameStyle.alignment = TextAnchor.LowerCenter;
+        _iconNameStyle.alignment = TextAnchor.UpperCenter;
 
         _iconNameStyle.imagePosition = ImagePosition.ImageAbove;
 
@@ -154,6 +152,36 @@ public class EditorNode
 
         _iconNameStyle.fixedHeight = bodyRect.height - 5f;
         _iconNameStyle.fixedWidth = bodyRect.width;
+    }
+
+    public GUIStyle HeaderStyle
+    {
+        get
+        {
+            var style = new GUIStyle();
+            
+            style.stretchWidth = true;
+            style.alignment = TextAnchor.MiddleLeft;
+            style.padding.left = 5;
+            style.normal.textColor = Color.white * 0.9f;
+
+            return style;
+        }
+    }
+
+    /// <summary>
+    /// Resize the node to fit the knobs.
+    /// </summary>
+    public void FitKnobs()
+    {
+        int maxCount = (int)Mathf.Max(_inputs.Count, _outputs.Count);
+
+        float totalKnobsHeight = maxCount * EditorKnob.kMinSize.y;
+        float totalOffsetHeight = (maxCount - 1) * kKnobOffset;
+
+        float heightRequired = totalKnobsHeight + totalOffsetHeight + kHeaderHeight;
+
+        bodyRect.height = heightRequired;
     }
 
     #endregion

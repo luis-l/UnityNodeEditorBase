@@ -88,7 +88,7 @@ public class CreateConnection : MultiStageAction
         }
 
         // Check if the origin node already had inputs
-        if (!_output.ParentNode.bCanHaveMultipleOutputs && _output.InputCount > 0) {
+        if (!_output.bCanHaveMultipleConnections && _output.InputCount > 0) {
             _oldConnectedInputs = _output.Inputs.ToList();
         }
     }

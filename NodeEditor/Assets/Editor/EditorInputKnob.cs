@@ -7,7 +7,7 @@ public class EditorInputKnob : EditorKnob {
 
     public EditorInputKnob(EditorNode parent) : base(parent)
     {
-
+        name = "input";
     }
 
     public void Connect(EditorOutputKnob output)
