@@ -40,7 +40,7 @@ public class EditorNode
         bodyRect.size = kDefaultSize;
     }
 
-    public EditorNode(string nodeName, Texture2D icon, Vector2 size)
+    public EditorNode(string nodeName, Vector2 size)
     {
         name = nodeName;
         bodyRect.size = size;

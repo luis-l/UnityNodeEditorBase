@@ -19,8 +19,7 @@ public class NodeCanvas
 
     public EditorNode CreateBaseNode()
     {
-        var icon = TextureLib.GetTexture("UnityLogo");
-        var node = new EditorNode("Basic Node", icon, EditorNode.kDefaultSize);
+        var node = new EditorNode("Basic Node", EditorNode.kDefaultSize);
 
         nodes.Add(node);
         return node;
