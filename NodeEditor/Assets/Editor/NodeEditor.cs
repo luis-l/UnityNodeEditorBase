@@ -375,6 +375,19 @@ public class NodeEditor
 
     #region Styles
 
+    private static GUIStyle _unityLabelStyle;
+    public static GUIStyle UnityLabelStyle
+    {
+        get
+        {
+            if (_unityLabelStyle == null) {
+                _unityLabelStyle = new GUIStyle(EditorStyles.label);
+            }
+
+            return _unityLabelStyle;
+        }
+    }
+
     private GUIStyle _backgroundStyle;
     private GUIStyle backgroundStyle
     {

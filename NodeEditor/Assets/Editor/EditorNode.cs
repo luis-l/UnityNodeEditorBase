@@ -100,26 +100,26 @@ public class EditorNode
         float oldLabelWidth = EditorGUIUtility.labelWidth;
         EditorGUIUtility.labelWidth = kBodyLabelWidth;
 
-        Color oldNormalColor = EditorStyles.label.normal.textColor;
-        Color oldActiveColor = EditorStyles.label.active.textColor;
-        Color oldFocusColor = EditorStyles.label.focused.textColor;
+        // Cache the old label style.
+        var oldLabelStyle = NodeEditor.UnityLabelStyle;
 
-        EditorStyles.label.normal.textColor = Color.white * 0.9f;
-        EditorStyles.label.active.textColor = ColorExtensions.From255(126, 186, 255) * 0.9f;
-        EditorStyles.label.focused.textColor = ColorExtensions.From255(126, 186, 255);
+        // Setup new values for the label style.
+        EditorStyles.label.normal = DefaultStyle.normal;
+        EditorStyles.label.active = DefaultStyle.active;
+        EditorStyles.label.focused = DefaultStyle.focused;
 
         EditorGUILayout.BeginVertical();
 
         GUILayout.Space(kKnobOffset);
         OnBodyGUI();
 
-        EditorGUILayout.EndVertical();
-
-        EditorStyles.label.normal.textColor = oldNormalColor;
-        EditorStyles.label.active.textColor = oldActiveColor;
-        EditorStyles.label.focused.textColor = oldFocusColor;
+        // Revert back to old label style.
+        EditorStyles.label.normal = oldLabelStyle.normal;
+        EditorStyles.label.active = oldLabelStyle.active;
+        EditorStyles.label.focused = oldLabelStyle.focused;
 
         EditorGUIUtility.labelWidth = oldLabelWidth;
+        EditorGUILayout.EndVertical();
     }
 
     public EditorInputKnob AddInput()
@@ -189,6 +189,22 @@ public class EditorNode
     }
 
     #region Styles and Contents
+
+    public static GUIStyle _defStyle;
+    public static GUIStyle DefaultStyle
+    {
+        get
+        {
+            if (_defStyle == null) {
+                _defStyle = new GUIStyle(EditorStyles.label);
+                _defStyle.normal.textColor = Color.white * 0.9f;
+                _defStyle.active.textColor = ColorExtensions.From255(126, 186, 255) * 0.9f;
+                _defStyle.focused.textColor = ColorExtensions.From255(126, 186, 255);
+            }
+
+            return _defStyle;
+        }
+    }
 
     public GUIStyle HeaderStyle
     {
