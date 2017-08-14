@@ -30,11 +30,16 @@ public class OutputTexture2D : EditorNode
 
     public override void OnBodyGUI()
     {
+        EditorGUI.BeginChangeCheck();
         Resolution = EditorGUILayout.IntField("Resolution", Resolution);
 
         GUILayout.Box(texPreview, GUILayout.Width(texPreview.width), GUILayout.Height(texPreview.height));
 
         if (GUILayout.Button("Update")) {
+            UpdateTexture();
+        }
+
+        if (EditorGUI.EndChangeCheck()) {
             UpdateTexture();
         }
     }
@@ -53,7 +58,7 @@ public class OutputTexture2D : EditorNode
                 var point = new Vector3(x, y, 0f) / _texRes;
                 float value = (float)noise.GetValue(point);
 
-                value = (value + 1) / 2f;
+                value = Mathf.Clamp01((value + 1) / 2f);
                 Color color = Color.HSVToRGB(value, 1f, 1f);
 
                 texPreview.SetPixel(x, y, color);
