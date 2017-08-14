@@ -17,20 +17,28 @@ public class NodeCanvas
 
     public List<EditorNode> nodes = new List<EditorNode>();
 
-    public EditorNode CreateBaseNode()
-    {
-        var node = new EditorNode("Basic Node", EditorNode.kDefaultSize);
-
-        nodes.Add(node);
-        return node;
-    }
-
     public T CreateNode<T>() where T : EditorNode, new()
     {
         T node = new T();
         nodes.Add(node);
 
         return node;
+    }
+
+    public EditorNode CreateNode(System.Type type)
+    {
+        if (typeof(EditorNode).IsAssignableFrom(type)) {
+            
+            var node = System.Activator.CreateInstance(type) as EditorNode;
+            
+            nodes.Add(node);
+            return node;
+        }
+
+        else {
+            Debug.LogError(type + " is not of type: " + typeof(EditorNode));
+            return null;
+        }
     }
 
     public void Remove(EditorNode node)

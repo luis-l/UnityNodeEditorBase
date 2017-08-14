@@ -80,10 +80,22 @@ public class ActionTriggerSystem
 
     private void setupContextTriggers()
     {
+        Action createPerlin = () =>
+        {
+            _manager.window.state.typeToCreate = typeof(PerlinNode);
+            _manager.RunUndoableAction<CreateNodeAction>();
+        };
+
+        Action createVoronoi = () =>
+        {
+            _manager.window.state.typeToCreate = typeof(VoronoiNode);
+            _manager.RunUndoableAction<CreateNodeAction>();
+        };
+
         Pair<string, Action>[] canvasContext = 
         { 
-            ContextItem("Create Basic Node", _manager.RunUndoableAction<CreateNodeAction>),
-            ContextItem("Create Add Node", () => { Debug.Log("Not Implemented"); })
+            ContextItem("Perlin", createPerlin),
+            ContextItem("Voronoi", createVoronoi)
         };
 
         var canvasTrigger = Create<ContextTrigger>().Build(canvasContext).EventOnly(EventType.ContextClick);

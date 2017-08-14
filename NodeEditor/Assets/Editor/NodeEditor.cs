@@ -178,7 +178,6 @@ public class NodeEditor
         Vector2 startTan = start + project * dirFactor;
         Vector2 endTan = end - project * dirFactor;
 
-
         UnityEditor.Handles.DrawBezier(start, end, startTan, endTan, color, null, 3f);
     }
 

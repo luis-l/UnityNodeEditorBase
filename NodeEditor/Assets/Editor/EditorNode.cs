@@ -21,6 +21,11 @@ public class EditorNode
     public const float kHeaderHeight = 15f;
 
     /// <summary>
+    /// The max label width for a field in the body.
+    /// </summary>
+    public const float kBodyLabelWidth = 100f;
+
+    /// <summary>
     /// The rect of the node in canvas space.
     /// </summary>
     public Rect bodyRect;
@@ -40,17 +45,11 @@ public class EditorNode
         bodyRect.size = kDefaultSize;
     }
 
-    public EditorNode(string nodeName, Vector2 size)
-    {
-        name = nodeName;
-        bodyRect.size = size;
-    }
-
     public virtual void OnGUI()
     {
         OnNodeHeaderGUI();
-        OnNodeBodyGUI();
         OnKnobGUI();
+        onBodyGuiInternal();
     }
 
     /// <summary>
@@ -92,9 +91,35 @@ public class EditorNode
     /// <summary>
     /// Draws the body of the node. By default, after the knob names.
     /// </summary>
-    public virtual void OnNodeBodyGUI()
-    {
+    public virtual void OnBodyGUI() { }
 
+    // Handles the coloring and layout of the body.
+    // This is for convenience so the user does not need to worry about this boiler plate code.
+    protected virtual void onBodyGuiInternal()
+    {
+        float oldLabelWidth = EditorGUIUtility.labelWidth;
+        EditorGUIUtility.labelWidth = kBodyLabelWidth;
+
+        Color oldNormalColor = EditorStyles.label.normal.textColor;
+        Color oldActiveColor = EditorStyles.label.active.textColor;
+        Color oldFocusColor = EditorStyles.label.focused.textColor;
+
+        EditorStyles.label.normal.textColor = Color.white * 0.9f;
+        EditorStyles.label.active.textColor = ColorExtensions.From255(126, 186, 255) * 0.9f;
+        EditorStyles.label.focused.textColor = ColorExtensions.From255(126, 186, 255);
+
+        EditorGUILayout.BeginVertical();
+
+        GUILayout.Space(kKnobOffset);
+        OnBodyGUI();
+
+        EditorGUILayout.EndVertical();
+
+        EditorStyles.label.normal.textColor = oldNormalColor;
+        EditorStyles.label.active.textColor = oldActiveColor;
+        EditorStyles.label.focused.textColor = oldFocusColor;
+
+        EditorGUIUtility.labelWidth = oldLabelWidth;
     }
 
     public EditorInputKnob AddInput()

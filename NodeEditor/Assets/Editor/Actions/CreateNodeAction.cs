@@ -7,27 +7,23 @@ public class CreateNodeAction : UndoableAction
     private NodeCanvas _canvas;
     private EditorNode _nodeCreated;
 
+    public override bool Init()
+    {
+        System.Type t = manager.window.state.typeToCreate;
+        return t != null && typeof(EditorNode).IsAssignableFrom(t);
+    }
+
     public override void Do()
     {
         _canvas = manager.window.canvas;
-        _nodeCreated = _canvas.CreateBaseNode();
 
+        var state = manager.window.state;
+
+        _nodeCreated = _canvas.CreateNode(state.typeToCreate);
         _nodeCreated.bodyRect.position = manager.window.state.lastClickedPosition;
 
-        _nodeCreated.AddInput();
-        _nodeCreated.AddInput();
-        _nodeCreated.AddInput();
-        _nodeCreated.AddInput();
-
-        _nodeCreated.AddOutput();
-        _nodeCreated.AddOutput();
-        _nodeCreated.AddOutput();
-
-        _nodeCreated.AddOutput();
-        _nodeCreated.AddOutput();
-        _nodeCreated.AddOutput();
-
-        _nodeCreated.FitKnobs();
+        // Done with this type creation.
+        state.typeToCreate = null;
     }
 
     public override void Undo()

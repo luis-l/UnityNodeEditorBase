@@ -9,4 +9,6 @@ public class NodeEditorState {
 
     public EditorOutputKnob selectedOutput;
     public EditorInputKnob selectedInput;
+
+    public System.Type typeToCreate;
 }
