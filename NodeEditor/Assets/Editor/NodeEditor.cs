@@ -27,9 +27,9 @@ public class NodeEditor
 
     public NodeEditor(NodeEditorWindow w)
     {
-        _backColor = ColorExtensions.From255(49, 52, 64);
+        _backColor = ColorExtensions.From255(59, 62, 74);
         _knobColor = ColorExtensions.From255(126, 186, 255);
-
+        
         TextureLib.LoadStandardTextures();
 
         _gridTex = TextureLib.GetTexture("Grid");
@@ -144,7 +144,7 @@ public class NodeEditor
                     Vector2 start = CanvasToScreenSpace(output.bodyRect.center);
                     Vector2 end = CanvasToScreenSpace(input.bodyRect.center);
 
-                    DrawBezier(start, end, Color.white);
+                    DrawBezier(start, end, _knobColor);
                 }
             }
         }
@@ -179,9 +179,39 @@ public class NodeEditor
         // Draw header
         GUILayout.Box(node.name, node.HeaderStyle);
 
-        GUILayout.EndArea();
+        drawKnobNames(node);
 
+        GUILayout.EndArea();
         GUI.EndGroup();
+    }
+
+    private void drawKnobNames(EditorNode node)
+    {
+        int inputCount = node.InputCount;
+        int outputCount = node.OutputCount;
+
+        int maxCount = (int)Mathf.Max(inputCount, outputCount);
+
+        GUILayout.BeginVertical();
+
+        for (int i = 0; i < maxCount; ++i) {
+
+            GUILayout.BeginHorizontal();
+
+            if (i < inputCount) {
+                var input = node.GetInput(i);
+                GUILayout.Label(input.name, input.GetStyle());
+            }
+
+            if (i < outputCount) {
+                var output = node.GetOutput(i);
+                GUILayout.Label(output.name, output.GetStyle());
+            }
+
+            GUILayout.EndHorizontal();
+        }
+
+        GUILayout.EndVertical();
     }
 
     /// <summary>

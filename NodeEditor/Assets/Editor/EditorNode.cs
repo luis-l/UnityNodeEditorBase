@@ -8,7 +8,7 @@ using UnityEditor;
 /// </summary>
 public class EditorNode
 {
-    public static readonly Vector2 kDefaultSize = new Vector2(120f, 110f);
+    public static readonly Vector2 kDefaultSize = new Vector2(140f, 110f);
 
     /// <summary>
     /// The space reserved between knobs.
@@ -90,6 +90,26 @@ public class EditorNode
         get { return _inputs; }
     }
 
+    public int InputCount
+    {
+        get { return _inputs.Count; }
+    }
+
+    public int OutputCount
+    {
+        get { return _outputs.Count; }
+    }
+
+    public EditorInputKnob GetInput(int index)
+    {
+        return _inputs[index];
+    }
+
+    public EditorOutputKnob GetOutput(int index)
+    {
+        return _outputs[index];
+    }
+
     /// <summary>
     /// Get the Y value of the top header.
     /// </summary>
@@ -164,6 +184,8 @@ public class EditorNode
             style.alignment = TextAnchor.MiddleLeft;
             style.padding.left = 5;
             style.normal.textColor = Color.white * 0.9f;
+            style.normal.background = TextureLib.GetTintTex("Square", ColorExtensions.From255(79, 82, 94));
+            style.fixedHeight = kHeaderHeight;
 
             return style;
         }

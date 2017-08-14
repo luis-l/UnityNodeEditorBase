@@ -23,4 +23,6 @@ public abstract class EditorKnob {
     {
         get { return parentNode; }
     }
+
+    public abstract GUIStyle GetStyle();
 }

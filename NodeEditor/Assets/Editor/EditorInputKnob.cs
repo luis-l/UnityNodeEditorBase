@@ -31,4 +31,16 @@ public class EditorInputKnob : EditorKnob {
     {
         get { return _connectedOutput; }
     }
+
+    public override GUIStyle GetStyle()
+    {
+        var style = new GUIStyle();
+        
+        style.fixedHeight = kMinSize.y + EditorNode.kKnobOffset;
+        style.alignment = TextAnchor.UpperLeft;
+        style.normal.textColor = Color.white * 0.9f;
+        style.padding.left = (int)kMinHalfSize.x + 5;
+
+        return style;
+    }
 }

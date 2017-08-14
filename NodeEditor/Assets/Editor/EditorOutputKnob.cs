@@ -101,4 +101,16 @@ public class EditorOutputKnob : EditorKnob {
 
         _inputs.Clear();
     }
+
+    public override GUIStyle GetStyle()
+    {
+        var style = new GUIStyle();
+
+        style.fixedHeight = kMinSize.y + EditorNode.kKnobOffset;
+        style.alignment = TextAnchor.UpperRight;
+        style.normal.textColor = Color.white * 0.9f;
+        style.padding.right = (int)kMinHalfSize.x + 5;
+
+        return style;
+    }
 }

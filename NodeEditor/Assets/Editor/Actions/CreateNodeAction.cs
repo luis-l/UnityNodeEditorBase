@@ -16,6 +16,12 @@ public class CreateNodeAction : UndoableAction
 
         _nodeCreated.AddInput();
         _nodeCreated.AddInput();
+        _nodeCreated.AddInput();
+        _nodeCreated.AddInput();
+
+        _nodeCreated.AddOutput();
+        _nodeCreated.AddOutput();
+        _nodeCreated.AddOutput();
 
         _nodeCreated.AddOutput();
         _nodeCreated.AddOutput();
