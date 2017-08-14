@@ -45,6 +45,9 @@ public class PerlinNode : EditorNode
         }
     }
 
+    // Uses a simple DFS traversal to find the connected outputs.
+    // Assumes a tree-like structure following output to input.
+    // Does not handle cycles.
     private void updateOutputNodes()
     {
         // Temp solution.
