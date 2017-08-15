@@ -4,5 +4,8 @@ Basic editor extension functionality to get a node editor up and running. (Click
 [![Editor Preview](http://i.imgur.com/Xe87a3R.png)](https://www.youtube.com/watch?v=Ei93d362uYE)
 
 
-Custom Node Rendering. This is a LibNoise port (WIP)
+Custom Node Rendering. This is a LibNoise port (WIP). Click on image to see a video preview.
+
 ![LibNoise Port Sample](http://i.imgur.com/HyVRkHV.png)
+[![Libnoise Port Sample](http://i.imgur.com/HyVRkHV.png)](https://twitter.com/Unit_978/status/897544106670383104)
+
