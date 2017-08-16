@@ -62,4 +62,5 @@ public class PerlinNode : EditorNode
     }
     
 ```
-Join the discord to leave feedback: https://discord.gg/ph2p7qC
+Join the discord to leave feedback or have discussion: https://discord.gg/ph2p7qC
+Feel free to also leave suggestions/requests in the issues page.
