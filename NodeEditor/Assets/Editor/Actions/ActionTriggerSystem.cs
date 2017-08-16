@@ -88,7 +88,7 @@ public class ActionTriggerSystem
 
         Pair<string, Action>[] canvasContext = 
         { 
-            ContextItem("Perlin", createBaseNode)
+            ContextItem("Basic Node", createBaseNode)
         };
 
         var canvasTrigger = Create<ContextTrigger>().Build(canvasContext).EventOnly(EventType.ContextClick);
