@@ -80,43 +80,15 @@ public class ActionTriggerSystem
 
     private void setupContextTriggers()
     {
-        Action createPerlin = () =>
+        Action createBaseNode = () =>
         {
-            _manager.window.state.typeToCreate = typeof(PerlinNode);
-            _manager.RunUndoableAction<CreateNodeAction>();
-        };
-
-        Action createVoronoi = () =>
-        {
-            _manager.window.state.typeToCreate = typeof(VoronoiNode);
-            _manager.RunUndoableAction<CreateNodeAction>();
-        };
-
-        Action createSelect = () =>
-        {
-            _manager.window.state.typeToCreate = typeof(SelectNode);
-            _manager.RunUndoableAction<CreateNodeAction>();
-        };
-
-        Action createCurve = () =>
-        {
-            _manager.window.state.typeToCreate = typeof(CurveNode);
-            _manager.RunUndoableAction<CreateNodeAction>();
-        };
-
-        Action createTexOut = () =>
-        {
-            _manager.window.state.typeToCreate = typeof(OutputTexture2D);
+            _manager.window.state.typeToCreate = typeof(EditorNode);
             _manager.RunUndoableAction<CreateNodeAction>();
         };
 
         Pair<string, Action>[] canvasContext = 
         { 
-            ContextItem("Perlin", createPerlin),
-            ContextItem("Voronoi", createVoronoi),
-            ContextItem("Select", createSelect),
-            ContextItem("Curve", createCurve),
-            ContextItem("Texture Out", createTexOut)
+            ContextItem("Perlin", createBaseNode)
         };
 
         var canvasTrigger = Create<ContextTrigger>().Build(canvasContext).EventOnly(EventType.ContextClick);
