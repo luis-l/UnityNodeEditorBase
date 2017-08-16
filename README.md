@@ -19,7 +19,8 @@ Custom Node Rendering. This is a LibNoise port (WIP). Click on image to see a vi
 
 Custom node class example
 
-...
+```csharp
+
 public class PerlinNode : EditorNode
 {
     private Perlin _noise = new Perlin();
@@ -58,4 +59,5 @@ public class PerlinNode : EditorNode
             // ... do stuff...
         }
     }
-...
+    
+```
