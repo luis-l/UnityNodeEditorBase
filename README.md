@@ -1,4 +1,5 @@
 # Unity Node Editor Base
+
 Basic editor extension functionality to get a node editor up and running. (Click on image to see video preview)
 
 Main Features
@@ -61,3 +62,4 @@ public class PerlinNode : EditorNode
     }
     
 ```
+Join the discord to leave feedback: https://discord.gg/ph2p7qC
