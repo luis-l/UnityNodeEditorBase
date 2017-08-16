@@ -124,17 +124,19 @@ public class EditorNode
         EditorGUILayout.EndVertical();
     }
 
-    public EditorInputKnob AddInput()
+    public EditorInputKnob AddInput(string name = "input")
     {
         var input = new EditorInputKnob(this);
+        input.name = name;
         _inputs.Add(input);
 
         return input;
     }
 
-    public EditorOutputKnob AddOutput()
+    public EditorOutputKnob AddOutput(string name = "output")
     {
         var output = new EditorOutputKnob(this);
+        output.name = name;
         _outputs.Add(output);
 
         return output;

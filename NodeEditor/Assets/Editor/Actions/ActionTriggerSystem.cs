@@ -80,9 +80,10 @@ public class ActionTriggerSystem
 
     private void setupContextTriggers()
     {
+        // Need to automate this via reflection.
         Action createBaseNode = () =>
         {
-            _manager.window.state.typeToCreate = typeof(EditorNode);
+            _manager.window.state.typeToCreate = typeof(BasicNode);
             _manager.RunUndoableAction<CreateNodeAction>();
         };
 
