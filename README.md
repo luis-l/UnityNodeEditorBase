@@ -1,8 +1,6 @@
 # Unity Node Editor Base
 Basic editor extension functionality to get a node editor up and running. (Click on image to see video preview)
 
-Welcome to the Unity Node Editor Base wiki!
-
 Main Features
 * Editor view with panning, zooming, and grid background
 * Customizable GUI
