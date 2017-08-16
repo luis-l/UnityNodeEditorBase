@@ -17,3 +17,45 @@ Main Features
 Custom Node Rendering. This is a LibNoise port (WIP). Click on image to see a video preview.
 [![Libnoise Port Sample](http://i.imgur.com/HyVRkHV.png)](https://twitter.com/Unit_978/status/897544106670383104)
 
+Custom node class example
+
+...
+public class PerlinNode : EditorNode
+{
+    private Perlin _noise = new Perlin();
+
+    public PerlinNode()
+    {
+        name = "Perlin";
+
+        var noiseIn = AddInput();
+        noiseIn.name = "Input";
+
+        var mask = AddInput();
+        mask.name = "Mask";
+
+        var noiseOut = AddOutput();
+        noiseOut.name = "Output";
+        noiseOut.getValue = () => { return _noise; };
+
+        FitKnobs();
+
+        bodyRect.height += 95f;
+        bodyRect.width = 150f;
+    }
+
+    public override void OnBodyGUI()
+    {
+        EditorGUI.BeginChangeCheck();
+
+        _noise.Seed = EditorGUILayout.IntField("Seed", _noise.Seed);
+        _noise.OctaveCount = EditorGUILayout.IntField("Octaves", _noise.OctaveCount);
+        _noise.Persistence = EditorGUILayout.DoubleField("Persistence", _noise.Persistence);
+        _noise.Frequency = EditorGUILayout.DoubleField("Frequency", _noise.Frequency);
+        _noise.Lacunarity = EditorGUILayout.DoubleField("Lacunarity", _noise.Lacunarity);
+
+        if (EditorGUI.EndChangeCheck()) {
+            // ... do stuff...
+        }
+    }
+...
