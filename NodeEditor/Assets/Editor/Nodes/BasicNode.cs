@@ -2,35 +2,39 @@
 using UnityEngine;
 using UnityEditor;
 
-public class BasicNode : EditorNode {
-
-    private int _someInt = 0;
-
-    public BasicNode()
+namespace UNEB
+{
+    public class BasicNode : EditorNode
     {
-        name = "Basic Node";
 
-        AddInput("Input");
-        AddOutput("Ouput");
+        private int _someInt = 0;
 
-        FitKnobs();
+        public BasicNode()
+        {
+            name = "Basic Node";
 
-        // Fit the int field, need to automate this.
-        bodyRect.height += 20f;
-    }
+            AddInput("Input");
+            AddOutput("Ouput");
 
-    public override void OnBodyGUI()
-    {
-        _someInt = EditorGUILayout.IntField("Int Value", _someInt);
-    }
+            FitKnobs();
 
-    public override void OnNewInputConnection(EditorInputKnob addedInput)
-    {
-        Debug.Log("Added Input: " + addedInput.name);
-    }
+            // Fit the int field, need to automate this.
+            bodyRect.height += 20f;
+        }
 
-    public override void OnInputConnectionRemoved(EditorInputKnob removedInput)
-    {
-        Debug.Log("Removed Input: " + removedInput.name);
+        public override void OnBodyGUI()
+        {
+            _someInt = EditorGUILayout.IntField("Int Value", _someInt);
+        }
+
+        public override void OnNewInputConnection(EditorInputKnob addedInput)
+        {
+            Debug.Log("Added Input: " + addedInput.name);
+        }
+
+        public override void OnInputConnectionRemoved(EditorInputKnob removedInput)
+        {
+            Debug.Log("Removed Input: " + removedInput.name);
+        }
     }
 }

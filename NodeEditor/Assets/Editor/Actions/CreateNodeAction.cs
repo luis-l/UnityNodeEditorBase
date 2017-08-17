@@ -2,37 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CreateNodeAction : UndoableAction
+namespace UNEB
 {
-    private NodeCanvas _canvas;
-    private EditorNode _nodeCreated;
-
-    public override bool Init()
+    public class CreateNodeAction : UndoableAction
     {
-        System.Type t = manager.window.state.typeToCreate;
-        return t != null && typeof(EditorNode).IsAssignableFrom(t);
-    }
+        private NodeCanvas _canvas;
+        private EditorNode _nodeCreated;
 
-    public override void Do()
-    {
-        _canvas = manager.window.canvas;
+        public override bool Init()
+        {
+            System.Type t = manager.window.state.typeToCreate;
+            return t != null && typeof(EditorNode).IsAssignableFrom(t);
+        }
 
-        var state = manager.window.state;
+        public override void Do()
+        {
+            _canvas = manager.window.canvas;
 
-        _nodeCreated = _canvas.CreateNode(state.typeToCreate);
-        _nodeCreated.bodyRect.position = manager.window.state.lastClickedPosition;
+            var state = manager.window.state;
 
-        // Done with this type creation.
-        state.typeToCreate = null;
-    }
+            _nodeCreated = _canvas.CreateNode(state.typeToCreate);
+            _nodeCreated.bodyRect.position = manager.window.state.lastClickedPosition;
 
-    public override void Undo()
-    {
-        _canvas.Remove(_nodeCreated);
-    }
+            // Done with this type creation.
+            state.typeToCreate = null;
+        }
 
-    public override void Redo()
-    {
-        _canvas.nodes.Add(_nodeCreated);
+        public override void Undo()
+        {
+            _canvas.Remove(_nodeCreated);
+        }
+
+        public override void Redo()
+        {
+            _canvas.nodes.Add(_nodeCreated);
+        }
     }
 }

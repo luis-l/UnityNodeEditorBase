@@ -1,55 +1,60 @@
 ﻿
 using UnityEngine;
 
-public class EditorInputKnob : EditorKnob {
-
-    private EditorOutputKnob _connectedOutput;
-
-    public EditorInputKnob(EditorNode parent) : base(parent)
+namespace UNEB
+{
+    public class EditorInputKnob : EditorKnob
     {
-        name = "input";
-    }
 
-    public void Connect(EditorOutputKnob output)
-    {
-        if (!HasOutputConnected()) {
-            _connectedOutput = output;
+        private EditorOutputKnob _connectedOutput;
+
+        public EditorInputKnob(EditorNode parent)
+            : base(parent)
+        {
+            name = "input";
         }
-    }
 
-    public void Disconnect()
-    {
-        _connectedOutput = null;
-    }
+        public void Connect(EditorOutputKnob output)
+        {
+            if (!HasOutputConnected()) {
+                _connectedOutput = output;
+            }
+        }
 
-    public bool HasOutputConnected()
-    {
-        return _connectedOutput != null;
-    }
+        public void Disconnect()
+        {
+            _connectedOutput = null;
+        }
 
-    public EditorOutputKnob OutputConnection
-    {
-        get { return _connectedOutput; }
-    }
+        public bool HasOutputConnected()
+        {
+            return _connectedOutput != null;
+        }
 
-    public override GUIStyle GetStyle()
-    {
-        var style = new GUIStyle();
-        
-        style.fixedHeight = kMinSize.y + EditorNode.kKnobOffset;
-        style.alignment = TextAnchor.MiddleLeft;
-        style.normal.textColor = Color.white * 0.9f;
-        style.padding.left = (int)kMinHalfSize.x + 5;
+        public EditorOutputKnob OutputConnection
+        {
+            get { return _connectedOutput; }
+        }
 
-        return style;
-    }
+        public override GUIStyle GetStyle()
+        {
+            var style = new GUIStyle();
 
-    /// <summary>
-    /// The input is anchored at the left side of the node.
-    /// </summary>
-    /// <returns></returns>
-    public override float GetNodeAnchor()
-    {
-        return parentNode.bodyRect.xMin;
+            style.fixedHeight = kMinSize.y + EditorNode.kKnobOffset;
+            style.alignment = TextAnchor.MiddleLeft;
+            style.normal.textColor = Color.white * 0.9f;
+            style.padding.left = (int)kMinHalfSize.x + 5;
+
+            return style;
+        }
+
+        /// <summary>
+        /// The input is anchored at the left side of the node.
+        /// </summary>
+        /// <returns></returns>
+        public override float GetNodeAnchor()
+        {
+            return parentNode.bodyRect.xMin;
+        }
     }
 }
