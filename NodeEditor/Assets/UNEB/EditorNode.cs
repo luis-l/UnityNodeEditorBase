@@ -105,7 +105,7 @@ namespace UNEB
             // Cache the old label style.
             // Do this first before changing the EditorStyles.label style.
             // So the original values are kept.
-            var oldLabelStyle = NodeEditor.UnityLabelStyle;
+            var oldLabelStyle = UnityLabelStyle;
 
             // Setup new values for the label style.
             EditorStyles.label.normal = DefaultStyle.normal;
@@ -195,6 +195,24 @@ namespace UNEB
         }
 
         #region Styles and Contents
+
+        private static GUIStyle _unityLabelStyle;
+
+        /// <summary>
+        /// Caches the default EditorStyle.
+        /// There is a strange bug with it being overriden when opening an Animation window.
+        /// </summary>
+        public static GUIStyle UnityLabelStyle
+        {
+            get
+            {
+                if (_unityLabelStyle == null) {
+                    _unityLabelStyle = new GUIStyle(EditorStyles.label);
+                }
+
+                return _unityLabelStyle;
+            }
+        }
 
         public static GUIStyle _defStyle;
         public static GUIStyle DefaultStyle

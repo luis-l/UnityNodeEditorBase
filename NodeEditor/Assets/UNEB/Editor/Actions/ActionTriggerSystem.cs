@@ -70,10 +70,10 @@ namespace UNEB
             var selectSingle = Create<InputTrigger>().Mouse(EventType.MouseDown, InputTrigger.Button.Left);
             selectSingle.action = () => { window.editor.OnMouseOverNode(onSingleSelected); };
 
-            var undoInput = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.Z, false, true);
+            var undoInput = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.Z, true, true);
             undoInput.action = _manager.UndoAction;
 
-            var redoInput = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.Y, false, true);
+            var redoInput = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.Y, true, true);
             redoInput.action = _manager.RedoAction;
 
             var recordClick = Create<InputTrigger>().EventOnly(EventType.MouseDown);
@@ -300,22 +300,11 @@ namespace UNEB
                 {
                     var e = Event.current;
 
-
-
-                    bool bResult =
+                    return
                         e.type == t &&
                         e.keyCode == k &&
                         e.shift == bIsShift &&
                         e.control == bIsCtrl;
-
-                    if (bResult) {
-                        GUIUtility.hotControl = 0;
-                        e.Use();
-
-                        Debug.Log("TRUE");
-                    }
-
-                    return bResult;
                 };
 
                 triggers.Add(trigger);

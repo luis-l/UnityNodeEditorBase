@@ -377,24 +377,6 @@ namespace UNEB
 
         #region Styles
 
-        private static GUIStyle _unityLabelStyle;
-
-        /// <summary>
-        /// Caches the default EditorStyle.
-        /// There is a strange bug with it being overriden when opening an Animation window.
-        /// </summary>
-        public static GUIStyle UnityLabelStyle
-        {
-            get
-            {
-                if (_unityLabelStyle == null) {
-                    _unityLabelStyle = new GUIStyle(EditorStyles.label);
-                }
-
-                return _unityLabelStyle;
-            }
-        }
-
         private GUIStyle _backgroundStyle;
         private GUIStyle backgroundStyle
         {

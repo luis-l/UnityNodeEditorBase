@@ -10,20 +10,23 @@ namespace UNEB
     /// </summary>
     public class ActionManager
     {
+        private NodeEditorWindow _window;
 
         private Stack<UndoableAction> _undoStack, _redoStack;
         private List<Action<Event>> _inputActions;
 
-        private NodeEditorWindow _window;
-
         // Caches the current multi-stage action that is currently executing.
         private MultiStageAction _activeMultiAction = null;
 
+        public event Action OnUndo;
+        public event Action OnRedo;
+
         public ActionManager(NodeEditorWindow w)
         {
-            _window = w;
             _undoStack = new Stack<UndoableAction>();
             _redoStack = new Stack<UndoableAction>();
+
+            _window = w;
         }
 
         public void Update()
@@ -105,7 +108,9 @@ namespace UNEB
                 _redoStack.Push(action);
 
                 action.Undo();
-                _window.Repaint();
+
+                if (OnUndo != null)
+                    OnUndo();
             }
         }
 
@@ -117,7 +122,9 @@ namespace UNEB
                 _undoStack.Push(action);
 
                 action.Redo();
-                _window.Repaint();
+
+                if (OnRedo != null)
+                    OnRedo();
             }
         }
 
