@@ -11,7 +11,7 @@ using UnityEditor;
 /// </summary>
 public class TextureLib
 {
-    public const string kStandardTexturesFolder = "NodeEditorTextures";
+    public const string kStandardTexturesFolder = "UNEB Textures";
     public enum TexType { PNG, JPEG, BMP };
 
     private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
