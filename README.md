@@ -62,5 +62,5 @@ public class PerlinNode : EditorNode
     }
     
 ```
-Join the discord to leave feedback or have discussion: https://discord.gg/ph2p7qC
-Feel free to also leave suggestions/requests in the issues page.
+Join the [discord](https://discord.gg/ph2p7qC) to leave feedback or have discussion.
+Feel free to also leave suggestions/requests in the [issues](https://github.com/Unit978/UnityNodeEditorBase/issues) page.
