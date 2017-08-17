@@ -64,3 +64,5 @@ public class PerlinNode : EditorNode
 ```
 Join the [discord](https://discord.gg/ph2p7qC) to leave feedback or have discussion.
 Feel free to also leave suggestions/requests in the [issues](https://github.com/Unit978/UnityNodeEditorBase/issues) page.
+
+[Trello Board](https://trello.com/b/8uTTbqHF/uneb-status-board) to view project status.
