@@ -194,6 +194,22 @@ namespace UNEB
             get { return bodyRect.yMin + kHeaderHeight; }
         }
 
+        /// <summary>
+        /// Resize the node to fit the knobs.
+        /// </summary>
+        public void FitKnobs()
+        {
+            int maxCount = (int)Mathf.Max(_inputs.Count, _outputs.Count);
+
+            float totalKnobsHeight = maxCount * NodeConnection.kMinSize.y;
+            float totalOffsetHeight = (maxCount - 1) * kKnobOffset;
+
+            float heightRequired = totalKnobsHeight + totalOffsetHeight + kHeaderHeight;
+
+            // Add some extra height at the end.
+            bodyRect.height = heightRequired + kHeaderHeight / 2f;
+        }
+
         #region Styles and Contents
 
         private static GUIStyle _unityLabelStyle;
@@ -245,22 +261,6 @@ namespace UNEB
 
                 return style;
             }
-        }
-
-        /// <summary>
-        /// Resize the node to fit the knobs.
-        /// </summary>
-        public void FitKnobs()
-        {
-            int maxCount = (int)Mathf.Max(_inputs.Count, _outputs.Count);
-
-            float totalKnobsHeight = maxCount * NodeConnection.kMinSize.y;
-            float totalOffsetHeight = (maxCount - 1) * kKnobOffset;
-
-            float heightRequired = totalKnobsHeight + totalOffsetHeight + kHeaderHeight;
-
-            // Add some extra height at the end.
-            bodyRect.height = heightRequired + kHeaderHeight / 2f;
         }
 
         #endregion

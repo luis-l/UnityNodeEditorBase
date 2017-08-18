@@ -27,6 +27,11 @@ namespace UNEB
         // To keep track of zooming.
         private Vector2 _zoomAdjustment;
 
+        public static float zoomDelta = 0.1f;
+        public static float minZoom = 1f;
+        public static float maxZoom = 4f;
+        public static float panSpeed = 1.2f;
+
         public NodeEditor(NodeEditorWindow w)
         {
             backColor = ColorExtensions.From255(59, 62, 74);
@@ -209,15 +214,15 @@ namespace UNEB
 
         public void Pan(Vector2 delta)
         {
-            canvas.panOffset += delta * canvas.ZoomScale * NodeCanvas.panSpeed;
+            canvas.panOffset += delta * canvas.ZoomScale * panSpeed;
         }
 
         public void Zoom(float zoomDirection)
         {
-            float scale = (zoomDirection < 0f) ? (1f - NodeCanvas.zoomDelta) : (1f + NodeCanvas.zoomDelta);
+            float scale = (zoomDirection < 0f) ? (1f - zoomDelta) : (1f + zoomDelta);
             canvas.zoom *= scale;
 
-            float cap = Mathf.Clamp(canvas.zoom.x, NodeCanvas.minZoom, NodeCanvas.maxZoom);
+            float cap = Mathf.Clamp(canvas.zoom.x, minZoom, maxZoom);
             canvas.zoom.Set(cap, cap);
         }
 

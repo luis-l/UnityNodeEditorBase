@@ -9,11 +9,6 @@ namespace UNEB
     /// </summary>
     public class NodeCanvas
     {
-        public static float zoomDelta = 0.1f;
-        public static float minZoom = 1f;
-        public static float maxZoom = 4f;
-        public static float panSpeed = 1.2f;
-
         public Vector2 panOffset = Vector2.zero;
         public Vector2 zoom = Vector2.one;
 
