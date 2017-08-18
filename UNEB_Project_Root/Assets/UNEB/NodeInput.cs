@@ -1,11 +1,11 @@
 ﻿
+using System.Linq;
 using UnityEngine;
 
 namespace UNEB
 {
     public class NodeInput : NodeConnection
     {
-
         private NodeOutput _connectedOutput;
 
         public NodeInput(Node parent)
@@ -14,16 +14,45 @@ namespace UNEB
             name = "input";
         }
 
-        public void Connect(NodeOutput output)
+        /// <summary>
+        /// Should only be called by NodeOutput
+        /// </summary>
+        /// <param name="output"></param>
+        internal void Connect(NodeOutput output)
         {
             if (!HasOutputConnected()) {
                 _connectedOutput = output;
             }
+
+            else {
+
+                const string msg = 
+                    "Connot Connect." +
+                    "The Input has an output connected and should be disconnected first, " +
+                    "before trying to connect to some output.";
+
+                Debug.LogWarning(msg);
+            }
         }
 
-        public void Disconnect()
+        /// <summary>
+        /// Should only be called by NodeOutput.
+        /// </summary>
+        internal void Disconnect()
         {
-            _connectedOutput = null;
+            if (_connectedOutput.Inputs.Contains(this)) {
+                
+                const string msg = 
+                    "Cannot disconnect. " +
+                    "The Output should remove this Input from its input list first, " +
+                    "before calling Disconnect().";
+
+                Debug.LogWarning(msg);
+            }
+
+            else {
+                _connectedOutput = null;
+            }
         }
 
         public bool HasOutputConnected()
