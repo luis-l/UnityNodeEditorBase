@@ -70,10 +70,10 @@ namespace UNEB
             var selectSingle = Create<InputTrigger>().Mouse(EventType.MouseDown, InputTrigger.Button.Left);
             selectSingle.action = () => { window.editor.OnMouseOverNode(onSingleSelected); };
 
-            var undoInput = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.Z, true, true);
+            var undoInput = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.Z, true, false);
             undoInput.action = _manager.UndoAction;
 
-            var redoInput = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.Y, true, true);
+            var redoInput = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.Y, true, false);
             redoInput.action = _manager.RedoAction;
 
             var recordClick = Create<InputTrigger>().EventOnly(EventType.MouseDown);

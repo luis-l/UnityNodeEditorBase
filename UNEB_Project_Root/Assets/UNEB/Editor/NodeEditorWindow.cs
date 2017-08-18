@@ -16,8 +16,8 @@ namespace UNEB
             w.Show();
         }
 
-        public float toolbarHeight = 20f;
-        public float toolbarButtonWidth = 50f;
+        public const float kToolbarHeight = 20f;
+        public const float kToolbarButtonWidth = 50f;
 
         public NodeEditor editor;
         public NodeCanvas canvas;
@@ -37,11 +37,25 @@ namespace UNEB
 
             editor.canvas = canvas;
 
+            // Make sure that changes from the undo system are immediately
+            // updated in the window. If not, the undo changes will be
+            // visually delayed.
+            actions.OnUndo += Repaint;
+            actions.OnRedo += Repaint;
+
             // NOTE: You can also serialize data members so the window remembers
-            // what data to use when the window is re-opened after an engine restart/reload.
+            // what data to use when the window is re-opened or after an engine restart/reload.
             // For example you can have a Node Graph structure saved as a Scriptable Object asset,
             // and you can serialize a reference to it in the window class so next time the engine starts up/reloads
             // it is still opened in the window.
+        }
+
+        void OnDisable()
+        {
+            if (actions != null) {
+                actions.OnUndo -= Repaint;
+                actions.OnRedo -= Repaint;
+            }
         }
 
         void OnGUI()
@@ -57,15 +71,15 @@ namespace UNEB
         {
             EditorGUILayout.BeginHorizontal("Toolbar");
 
-            if (DropdownButton("File", toolbarButtonWidth)) {
+            if (DropdownButton("File", kToolbarButtonWidth)) {
                 createFileMenu();
             }
 
-            if (DropdownButton("Edit", toolbarButtonWidth)) {
+            if (DropdownButton("Edit", kToolbarButtonWidth)) {
                 createEditMenu();
             }
 
-            if (DropdownButton("View", toolbarButtonWidth)) {
+            if (DropdownButton("View", kToolbarButtonWidth)) {
                 createViewMenu();
             }
 
@@ -85,7 +99,7 @@ namespace UNEB
             menu.AddItem(new GUIContent("Load"), false, openLoadFileWindow);
             menu.AddItem(new GUIContent("Save"), false, openSaveFileWindow);
 
-            menu.DropDown(new Rect(5f, toolbarHeight, 0f, 0f));
+            menu.DropDown(new Rect(5f, kToolbarHeight, 0f, 0f));
         }
 
         private void createEditMenu()
@@ -95,7 +109,7 @@ namespace UNEB
             menu.AddItem(new GUIContent("Undo"), false, actions.UndoAction);
             menu.AddItem(new GUIContent("Redo"), false, actions.RedoAction);
 
-            menu.DropDown(new Rect(55f, toolbarHeight, 0f, 0f));
+            menu.DropDown(new Rect(55f, kToolbarHeight, 0f, 0f));
         }
 
         private void createViewMenu()
@@ -105,7 +119,7 @@ namespace UNEB
             menu.AddItem(new GUIContent("Zoom In"), false, () => { editor.Zoom(-1); });
             menu.AddItem(new GUIContent("Zoom Out"), false, () => { editor.Zoom(1); });
 
-            menu.DropDown(new Rect(105f, toolbarHeight, 0f, 0f));
+            menu.DropDown(new Rect(105f, kToolbarHeight, 0f, 0f));
         }
 
         private void openLoadFileWindow()
@@ -141,8 +155,8 @@ namespace UNEB
             {
                 var rect = Size;
 
-                rect.y += toolbarHeight;
-                rect.height -= toolbarHeight;
+                rect.y += kToolbarHeight;
+                rect.height -= kToolbarHeight;
 
                 return rect;
             }
