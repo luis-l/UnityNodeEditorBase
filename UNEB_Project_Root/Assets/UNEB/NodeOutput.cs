@@ -98,12 +98,17 @@ namespace UNEB
 
         public void RemoveAll()
         {
-            foreach (NodeInput input in _inputs) {
+            // We cache the list of connected inputs because in order
+            // to disconnect them, they must be removed from the _inputs list
+            // first.
+            var inputsCache = new List<NodeInput>(_inputs);
+
+            _inputs.Clear();
+
+            foreach (NodeInput input in inputsCache) {
                 parentNode.OnInputConnectionRemoved(input);
                 input.Disconnect();
             }
-
-            _inputs.Clear();
         }
 
         public override GUIStyle GetStyle()
