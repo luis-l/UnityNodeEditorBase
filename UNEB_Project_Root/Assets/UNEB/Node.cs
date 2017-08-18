@@ -50,14 +50,14 @@ namespace UNEB
         public virtual void OnGUI()
         {
             OnNodeHeaderGUI();
-            OnKnobGUI();
+            OnConnectionsGUI();
             onBodyGuiInternal();
         }
 
         /// <summary>
-        /// Renders the knob names. By default, after the header.
+        /// Renders the node connections. By default, after the header.
         /// </summary>
-        public virtual void OnKnobGUI()
+        public virtual void OnConnectionsGUI()
         {
             int inputCount = _inputs.Count;
             int outputCount = _outputs.Count;
@@ -91,7 +91,7 @@ namespace UNEB
         }
 
         /// <summary>
-        /// Draws the body of the node. By default, after the knob names.
+        /// Draws the body of the node. By default, after the connections.
         /// </summary>
         public virtual void OnBodyGUI() { }
 
