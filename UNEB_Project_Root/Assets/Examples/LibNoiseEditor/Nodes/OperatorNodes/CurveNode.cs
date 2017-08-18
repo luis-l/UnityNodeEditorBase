@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using UNEB;
 
-public class CurveNode : EditorNode
+public class CurveNode : Node
 {
 
     private AnimationCurve _curve = new AnimationCurve();

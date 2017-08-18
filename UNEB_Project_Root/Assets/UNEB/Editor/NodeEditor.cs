@@ -91,13 +91,13 @@ namespace UNEB
 
         private void drawNodes()
         {
-            foreach (EditorNode node in canvas.nodes) {
+            foreach (Node node in canvas.nodes) {
                 drawNode(node);
                 drawKnobs(node);
             }
         }
 
-        private void drawKnobs(EditorNode node)
+        private void drawKnobs(Node node)
         {
             foreach (var input in node.Inputs) {
                 drawKnob(input);
@@ -108,7 +108,7 @@ namespace UNEB
             }
         }
 
-        private void drawKnob(EditorKnob knob)
+        private void drawKnob(NodeConnection knob)
         {
             // Convert the body rect from canvas to screen space.
             var screenRect = knob.bodyRect;
@@ -119,11 +119,11 @@ namespace UNEB
 
         private void drawConnections()
         {
-            foreach (EditorNode node in canvas.nodes) {
+            foreach (Node node in canvas.nodes) {
 
                 foreach (var output in node.Outputs) {
 
-                    foreach (EditorInputKnob input in output.Inputs) {
+                    foreach (NodeInput input in output.Inputs) {
 
                         Vector2 start = CanvasToScreenSpace(output.bodyRect.center);
                         Vector2 end = CanvasToScreenSpace(input.bodyRect.center);
@@ -144,7 +144,7 @@ namespace UNEB
             }
         }
 
-        private void drawNode(EditorNode node)
+        private void drawNode(Node node)
         {
             // Convert the node rect from canvas to screen space.
             Rect screenRect = node.bodyRect;
@@ -285,11 +285,11 @@ namespace UNEB
         /// Executes the callback on the first node that is detected under the mouse.
         /// </summary>
         /// <param name="callback"></param>
-        public bool OnMouseOverNode(Action<EditorNode> callback)
+        public bool OnMouseOverNode(Action<Node> callback)
         {
             for (int i = canvas.nodes.Count - 1; i >= 0; --i) {
 
-                EditorNode node = canvas.nodes[i];
+                Node node = canvas.nodes[i];
 
                 if (IsUnderMouse(node.bodyRect)) {
                     callback(node);
@@ -306,7 +306,7 @@ namespace UNEB
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
-        public bool OnMouseOverOutput(Action<EditorOutputKnob> callback)
+        public bool OnMouseOverOutput(Action<NodeOutput> callback)
         {
             foreach (var node in canvas.nodes) {
 
@@ -327,7 +327,7 @@ namespace UNEB
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
-        public bool OnMouseOverInput(Action<EditorInputKnob> callback)
+        public bool OnMouseOverInput(Action<NodeInput> callback)
         {
             foreach (var node in canvas.nodes) {
 
@@ -348,7 +348,7 @@ namespace UNEB
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
-        public bool OnMouseOverNode_OrInput(Action<EditorNode> callback)
+        public bool OnMouseOverNode_OrInput(Action<Node> callback)
         {
             foreach (var node in canvas.nodes) {
 

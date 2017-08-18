@@ -2,7 +2,7 @@
 using UnityEngine;
 using UNEB;
 
-public class OutputMesh : EditorNode {
+public class OutputMesh : Node {
 
 	
 }

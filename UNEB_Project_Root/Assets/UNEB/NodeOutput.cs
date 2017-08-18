@@ -5,22 +5,22 @@ using UnityEngine;
 
 namespace UNEB
 {
-    public class EditorOutputKnob : EditorKnob
+    public class NodeOutput : NodeConnection
     {
 
         public readonly bool bCanHaveMultipleConnections;
 
-        private List<EditorInputKnob> _inputs;
+        private List<NodeInput> _inputs;
 
-        public EditorOutputKnob(EditorNode parent, bool canHaveMultipleConnections = true)
+        public NodeOutput(Node parent, bool canHaveMultipleConnections = true)
             : base(parent)
         {
             name = "output";
             bCanHaveMultipleConnections = canHaveMultipleConnections;
-            _inputs = new List<EditorInputKnob>();
+            _inputs = new List<NodeInput>();
         }
 
-        public IEnumerable<EditorInputKnob> Inputs
+        public IEnumerable<NodeInput> Inputs
         {
             get { return _inputs; }
         }
@@ -35,7 +35,7 @@ namespace UNEB
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public bool Add(EditorInputKnob input)
+        public bool Add(NodeInput input)
         {
             if (!CanConnectInput(input)) {
                 return false;
@@ -66,7 +66,7 @@ namespace UNEB
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public bool CanConnectInput(EditorInputKnob input)
+        public bool CanConnectInput(NodeInput input)
         {
             if (input == null) {
                 Debug.LogError("Attempted to add a null input.");
@@ -88,7 +88,7 @@ namespace UNEB
             return true;
         }
 
-        public void Remove(EditorInputKnob input)
+        public void Remove(NodeInput input)
         {
             if (_inputs.Remove(input)) {
                 parentNode.OnInputConnectionRemoved(input);
@@ -98,7 +98,7 @@ namespace UNEB
 
         public void RemoveAll()
         {
-            foreach (EditorInputKnob input in _inputs) {
+            foreach (NodeInput input in _inputs) {
                 parentNode.OnInputConnectionRemoved(input);
                 input.Disconnect();
             }
@@ -110,7 +110,7 @@ namespace UNEB
         {
             var style = new GUIStyle();
 
-            style.fixedHeight = kMinSize.y + EditorNode.kKnobOffset;
+            style.fixedHeight = kMinSize.y + Node.kKnobOffset;
             style.alignment = TextAnchor.MiddleRight;
             style.normal.textColor = Color.white * 0.9f;
             style.padding.right = (int)kMinHalfSize.x + 5;

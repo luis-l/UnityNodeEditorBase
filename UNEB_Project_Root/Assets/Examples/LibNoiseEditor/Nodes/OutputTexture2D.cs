@@ -3,12 +3,12 @@ using UnityEngine;
 using UnityEditor;
 using UNEB;
 
-public class OutputTexture2D : EditorNode
+public class OutputTexture2D : Node
 {
 
     private Texture2D texPreview;
 
-    EditorInputKnob inputNoise;
+    NodeInput inputNoise;
 
     private int _texRes = 100;
     public int Resolution

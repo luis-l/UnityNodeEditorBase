@@ -8,7 +8,7 @@ namespace UNEB
     /// <summary>
     /// The visual representation of a logic unit such as an object or function.
     /// </summary>
-    public class EditorNode
+    public class Node
     {
         public static readonly Vector2 kDefaultSize = new Vector2(140f, 110f);
 
@@ -39,10 +39,10 @@ namespace UNEB
         /// </summary>
         public const float resizePaddingX = 20f;
 
-        private List<EditorOutputKnob> _outputs = new List<EditorOutputKnob>();
-        private List<EditorInputKnob> _inputs = new List<EditorInputKnob>();
+        private List<NodeOutput> _outputs = new List<NodeOutput>();
+        private List<NodeInput> _inputs = new List<NodeInput>();
 
-        public EditorNode()
+        public Node()
         {
             bodyRect.size = kDefaultSize;
         }
@@ -126,18 +126,18 @@ namespace UNEB
             EditorGUILayout.EndVertical();
         }
 
-        public EditorInputKnob AddInput(string name = "input")
+        public NodeInput AddInput(string name = "input")
         {
-            var input = new EditorInputKnob(this);
+            var input = new NodeInput(this);
             input.name = name;
             _inputs.Add(input);
 
             return input;
         }
 
-        public EditorOutputKnob AddOutput(string name = "output")
+        public NodeOutput AddOutput(string name = "output")
         {
-            var output = new EditorOutputKnob(this);
+            var output = new NodeOutput(this);
             output.name = name;
             _outputs.Add(output);
 
@@ -148,20 +148,20 @@ namespace UNEB
         /// Called when the output knob had an input connection removed.
         /// </summary>
         /// <param name="removedInput"></param>
-        public virtual void OnInputConnectionRemoved(EditorInputKnob removedInput) { }
+        public virtual void OnInputConnectionRemoved(NodeInput removedInput) { }
 
         /// <summary>
         /// Called when the output knob made a connection to an input knob.
         /// </summary>
         /// <param name="addedInput"></param>
-        public virtual void OnNewInputConnection(EditorInputKnob addedInput) { }
+        public virtual void OnNewInputConnection(NodeInput addedInput) { }
 
-        public IEnumerable<EditorOutputKnob> Outputs
+        public IEnumerable<NodeOutput> Outputs
         {
             get { return _outputs; }
         }
 
-        public IEnumerable<EditorInputKnob> Inputs
+        public IEnumerable<NodeInput> Inputs
         {
             get { return _inputs; }
         }
@@ -176,12 +176,12 @@ namespace UNEB
             get { return _outputs.Count; }
         }
 
-        public EditorInputKnob GetInput(int index)
+        public NodeInput GetInput(int index)
         {
             return _inputs[index];
         }
 
-        public EditorOutputKnob GetOutput(int index)
+        public NodeOutput GetOutput(int index)
         {
             return _outputs[index];
         }
@@ -254,7 +254,7 @@ namespace UNEB
         {
             int maxCount = (int)Mathf.Max(_inputs.Count, _outputs.Count);
 
-            float totalKnobsHeight = maxCount * EditorKnob.kMinSize.y;
+            float totalKnobsHeight = maxCount * NodeConnection.kMinSize.y;
             float totalOffsetHeight = (maxCount - 1) * kKnobOffset;
 
             float heightRequired = totalKnobsHeight + totalOffsetHeight + kHeaderHeight;

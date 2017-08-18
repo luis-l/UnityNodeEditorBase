@@ -6,15 +6,15 @@ using UnityEngine;
 namespace UNEB
 {
     // Each input is paired with 1 output.
-    using InputToOutputPair = Pair<EditorInputKnob, EditorOutputKnob>;
+    using InputToOutputPair = Pair<NodeInput, NodeOutput>;
 
     // Each output can have many inputs
-    using OutputToInputsPair = Pair<EditorOutputKnob, System.Collections.Generic.List<EditorInputKnob>>;
+    using OutputToInputsPair = Pair<NodeOutput, System.Collections.Generic.List<NodeInput>>;
 
     public class DeleteNodeAction : UndoableAction
     {
         private NodeCanvas _canvas;
-        private EditorNode _nodeRemoved = null;
+        private Node _nodeRemoved = null;
 
         private List<InputToOutputPair> _oldConnectedOutputs;
         private List<OutputToInputsPair> _oldConnectedInputs;
@@ -88,8 +88,8 @@ namespace UNEB
             // For all the remembered inputs (of this node) to output pairs, reconnect.
             foreach (InputToOutputPair inOutPair in _oldConnectedOutputs) {
 
-                EditorInputKnob input = inOutPair.item1;
-                EditorOutputKnob output = inOutPair.item2;
+                NodeInput input = inOutPair.item1;
+                NodeOutput output = inOutPair.item2;
 
                 output.Add(input);
             }
@@ -97,8 +97,8 @@ namespace UNEB
             // For all the remembered outputs (of this node) to inputs, reconnect.
             foreach (OutputToInputsPair outInsPair in _oldConnectedInputs) {
 
-                EditorOutputKnob output = outInsPair.item1;
-                List<EditorInputKnob> inputs = outInsPair.item2;
+                NodeOutput output = outInsPair.item1;
+                List<NodeInput> inputs = outInsPair.item2;
 
                 foreach (var input in inputs) {
                     output.Add(input);

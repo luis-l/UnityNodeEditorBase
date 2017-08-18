@@ -7,12 +7,12 @@ namespace UNEB
     public class CreateNodeAction : UndoableAction
     {
         private NodeCanvas _canvas;
-        private EditorNode _nodeCreated;
+        private Node _nodeCreated;
 
         public override bool Init()
         {
             System.Type t = manager.window.state.typeToCreate;
-            return t != null && typeof(EditorNode).IsAssignableFrom(t);
+            return t != null && typeof(Node).IsAssignableFrom(t);
         }
 
         public override void Do()

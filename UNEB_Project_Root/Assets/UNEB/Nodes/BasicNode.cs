@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace UNEB
 {
-    public class BasicNode : EditorNode
+    public class BasicNode : Node
     {
 
         private int _someInt = 0;
@@ -27,12 +27,12 @@ namespace UNEB
             _someInt = EditorGUILayout.IntField("Int Value", _someInt);
         }
 
-        public override void OnNewInputConnection(EditorInputKnob addedInput)
+        public override void OnNewInputConnection(NodeInput addedInput)
         {
             Debug.Log("Added Input: " + addedInput.name);
         }
 
-        public override void OnInputConnectionRemoved(EditorInputKnob removedInput)
+        public override void OnInputConnectionRemoved(NodeInput removedInput)
         {
             Debug.Log("Removed Input: " + removedInput.name);
         }

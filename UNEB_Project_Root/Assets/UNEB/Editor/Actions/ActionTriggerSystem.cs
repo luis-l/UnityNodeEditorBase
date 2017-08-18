@@ -176,13 +176,13 @@ namespace UNEB
             return mapping;
         }
 
-        private void onSingleSelected(EditorNode node)
+        private void onSingleSelected(Node node)
         {
             _manager.window.state.selectedNode = node;
             _manager.window.canvas.PushToEnd(node);
         }
 
-        private void onOutputKnobSelected(EditorOutputKnob output)
+        private void onOutputKnobSelected(NodeOutput output)
         {
             _manager.window.state.selectedOutput = output;
         }
@@ -204,7 +204,7 @@ namespace UNEB
 
         private bool isMouseOverInputStartConn()
         {
-            Action<EditorInputKnob> startConnFromInput = (EditorInputKnob input) =>
+            Action<NodeInput> startConnFromInput = (NodeInput input) =>
             {
                 window.state.selectedOutput = input.OutputConnection;
 

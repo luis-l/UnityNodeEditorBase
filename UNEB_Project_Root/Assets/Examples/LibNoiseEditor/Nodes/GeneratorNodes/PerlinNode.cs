@@ -7,7 +7,7 @@ using UnityEditor;
 using UNEB;
 using LibNoise.Generator;
 
-public class PerlinNode : EditorNode
+public class PerlinNode : Node
 {
     private Perlin _noise = new Perlin();
 
@@ -52,7 +52,7 @@ public class PerlinNode : EditorNode
     private void updateOutputNodes()
     {
         // Temp solution.
-        var dfs = new Stack<EditorNode>();
+        var dfs = new Stack<Node>();
 
         dfs.Push(this);
 

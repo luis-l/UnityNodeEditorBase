@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UNEB;
 
-public class SelectNode : EditorNode
+public class SelectNode : Node
 {
     private Select _op = new Select();
 

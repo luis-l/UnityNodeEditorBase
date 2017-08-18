@@ -5,7 +5,7 @@ namespace UNEB
 {
     public class DragNode : MultiStageAction
     {
-        private EditorNode _draggingNode;
+        private Node _draggingNode;
 
         private Vector2 _startDragPos, _endDragPos;
 

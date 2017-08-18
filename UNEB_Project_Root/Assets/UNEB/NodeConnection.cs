@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UNEB
 {
-    public abstract class EditorKnob
+    public abstract class NodeConnection
     {
 
         public static readonly Vector2 kMinSize = new Vector2(15f, 15f);
@@ -15,8 +15,8 @@ namespace UNEB
 
         public System.Func<object> getValue;
 
-        protected EditorNode parentNode;
-        public EditorKnob(EditorNode parentNode)
+        protected Node parentNode;
+        public NodeConnection(Node parentNode)
         {
             this.parentNode = parentNode;
         }
@@ -24,7 +24,7 @@ namespace UNEB
         /// <summary>
         /// The node associated with this knob.
         /// </summary>
-        public EditorNode ParentNode
+        public Node ParentNode
         {
             get { return parentNode; }
         }
@@ -36,7 +36,7 @@ namespace UNEB
             OnNameGUI();
 
             // Position the knobs properly for the draw pass of the knobs in the editor.
-            float yPos = parentNode.HeaderTop + order * GetStyle().fixedHeight + EditorNode.kKnobOffset;
+            float yPos = parentNode.HeaderTop + order * GetStyle().fixedHeight + Node.kKnobOffset;
             bodyRect.center = new Vector2(GetNodeAnchor(), 0f);
             bodyRect.y = yPos;
         }

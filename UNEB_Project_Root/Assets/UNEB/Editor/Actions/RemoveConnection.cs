@@ -6,8 +6,8 @@ namespace UNEB
     public class RemoveConnection : UndoableAction
     {
 
-        private EditorOutputKnob _output;
-        private EditorInputKnob _input;
+        private NodeOutput _output;
+        private NodeInput _input;
 
         public override void Do()
         {

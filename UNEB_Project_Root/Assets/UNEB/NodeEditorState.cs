@@ -7,11 +7,11 @@ namespace UNEB
     public class NodeEditorState
     {
 
-        public EditorNode selectedNode;
+        public Node selectedNode;
         public Vector2 lastClickedPosition;
 
-        public EditorOutputKnob selectedOutput;
-        public EditorInputKnob selectedInput;
+        public NodeOutput selectedOutput;
+        public NodeInput selectedInput;
 
         public System.Type typeToCreate;
     }

@@ -9,14 +9,14 @@ namespace UNEB
 {
     public class CreateConnection : MultiStageAction
     {
-        private EditorInputKnob _input;
-        private EditorOutputKnob _output;
+        private NodeInput _input;
+        private NodeOutput _output;
 
         // The output of the old node it was connected to.
-        private EditorOutputKnob _oldConnectedOutput;
+        private NodeOutput _oldConnectedOutput;
 
         // Old inputs of the node.
-        private List<EditorInputKnob> _oldConnectedInputs;
+        private List<NodeInput> _oldConnectedInputs;
 
         public override void Do()
         {

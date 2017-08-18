@@ -17,9 +17,9 @@ namespace UNEB
         public Vector2 panOffset = Vector2.zero;
         public Vector2 zoom = Vector2.one;
 
-        public List<EditorNode> nodes = new List<EditorNode>();
+        public List<Node> nodes = new List<Node>();
 
-        public T CreateNode<T>() where T : EditorNode, new()
+        public T CreateNode<T>() where T : Node, new()
         {
             T node = new T();
             nodes.Add(node);
@@ -27,23 +27,23 @@ namespace UNEB
             return node;
         }
 
-        public EditorNode CreateNode(System.Type type)
+        public Node CreateNode(System.Type type)
         {
-            if (typeof(EditorNode).IsAssignableFrom(type)) {
+            if (typeof(Node).IsAssignableFrom(type)) {
 
-                var node = System.Activator.CreateInstance(type) as EditorNode;
+                var node = System.Activator.CreateInstance(type) as Node;
 
                 nodes.Add(node);
                 return node;
             }
 
             else {
-                Debug.LogError(type + " is not of type: " + typeof(EditorNode));
+                Debug.LogError(type + " is not of type: " + typeof(Node));
                 return null;
             }
         }
 
-        public void Remove(EditorNode node)
+        public void Remove(Node node)
         {
             nodes.Remove(node);
         }
@@ -52,7 +52,7 @@ namespace UNEB
         /// Put the node at the end of the node list.
         /// </summary>
         /// <param name="node"></param>
-        public void PushToEnd(EditorNode node)
+        public void PushToEnd(Node node)
         {
             if (nodes.Remove(node)) {
                 nodes.Add(node);

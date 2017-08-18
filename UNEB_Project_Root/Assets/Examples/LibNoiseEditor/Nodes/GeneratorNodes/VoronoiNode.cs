@@ -3,7 +3,7 @@ using UnityEditor;
 using LibNoise.Generator;
 using UNEB;
 
-public class VoronoiNode : EditorNode
+public class VoronoiNode : Node
 {
     private Voronoi _noise = new Voronoi();
 

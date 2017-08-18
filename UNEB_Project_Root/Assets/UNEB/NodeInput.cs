@@ -3,18 +3,18 @@ using UnityEngine;
 
 namespace UNEB
 {
-    public class EditorInputKnob : EditorKnob
+    public class NodeInput : NodeConnection
     {
 
-        private EditorOutputKnob _connectedOutput;
+        private NodeOutput _connectedOutput;
 
-        public EditorInputKnob(EditorNode parent)
+        public NodeInput(Node parent)
             : base(parent)
         {
             name = "input";
         }
 
-        public void Connect(EditorOutputKnob output)
+        public void Connect(NodeOutput output)
         {
             if (!HasOutputConnected()) {
                 _connectedOutput = output;
@@ -31,7 +31,7 @@ namespace UNEB
             return _connectedOutput != null;
         }
 
-        public EditorOutputKnob OutputConnection
+        public NodeOutput OutputConnection
         {
             get { return _connectedOutput; }
         }
@@ -40,7 +40,7 @@ namespace UNEB
         {
             var style = new GUIStyle();
 
-            style.fixedHeight = kMinSize.y + EditorNode.kKnobOffset;
+            style.fixedHeight = kMinSize.y + Node.kKnobOffset;
             style.alignment = TextAnchor.MiddleLeft;
             style.normal.textColor = Color.white * 0.9f;
             style.padding.left = (int)kMinHalfSize.x + 5;
