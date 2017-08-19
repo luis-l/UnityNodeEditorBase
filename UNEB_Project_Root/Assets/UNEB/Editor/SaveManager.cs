@@ -349,7 +349,7 @@ namespace UNEB
         /// <summary>
         /// Handles deleting temporary graph or saving valid graph.
         /// </summary>
-        internal void OnCleanup()
+        internal void Cleanup()
         {
             // Only save/delete things if we are in edit mode.
             if (_window.GetMode() != NodeEditorWindow.Mode.Edit) {

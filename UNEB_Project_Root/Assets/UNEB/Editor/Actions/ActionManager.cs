@@ -131,6 +131,21 @@ namespace UNEB
             }
         }
 
+        public void Reset()
+        {
+            foreach (var action in _undoStack) {
+                action.Disable();
+            }
+
+            foreach (var action in _redoStack) {
+                action.Disable();
+            }
+
+            _activeMultiAction = null;
+            _undoStack.Clear();
+            _redoStack.Clear();
+        }
+
         public NodeEditorWindow window
         {
             get { return _window; }

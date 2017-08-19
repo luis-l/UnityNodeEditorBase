@@ -45,6 +45,26 @@ namespace UNEB
         private List<NodeInput> _inputs = new List<NodeInput>();
 
         /// <summary>
+        /// Always call the base OnDisable() to cleanup the connection objects.
+        /// </summary>
+        protected virtual void OnDestroy()
+        {
+            _inputs.RemoveAll(
+                (input) =>
+                {
+                    ScriptableObject.DestroyImmediate(input, true);
+                    return true;
+                });
+
+            _outputs.RemoveAll(
+                (output) =>
+                {
+                    ScriptableObject.DestroyImmediate(output, true);
+                    return true;
+                });
+        }
+
+        /// <summary>
         /// Use this for initialization.
         /// </summary>
         public virtual void Init()

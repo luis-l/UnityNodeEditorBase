@@ -52,12 +52,6 @@ namespace UNEB
             actions.OnUndo += Repaint;
             actions.OnRedo += Repaint;
 
-            // NOTE: You can also serialize data members so the window remembers
-            // what data to use when the window is re-opened or after an engine restart/reload.
-            // For example you can have a Node Graph structure saved as a Scriptable Object asset,
-            // and you can serialize a reference to it in the window class so next time the engine starts up/reloads
-            // it is still opened in the window.
-
             // Always start in edit mode.
             //
             // The only way it can be in view mode is if the window is 
@@ -67,12 +61,12 @@ namespace UNEB
 
         void OnDisable()
         {
-            if (actions != null) {
-                actions.OnUndo -= Repaint;
-                actions.OnRedo -= Repaint;
-            }
+            cleanup();
+        }
 
-            _saveManager.OnCleanup();
+        void OnDestroy()
+        {
+            cleanup();
         }
 
         void OnGUI()
@@ -114,7 +108,7 @@ namespace UNEB
             // can be viewed during runtime. Ex) Behavior tree.
 
             // Cleanup before putting new graph.
-            _saveManager.OnCleanup();
+            cleanup();
 
             SetGraph(graphToView, Mode.View); */
         }
@@ -124,10 +118,21 @@ namespace UNEB
             graph = g;
             editor.graph = g;
 
-            // Reset Undo
-            actions = new ActionManager(this);
+            // Reset Undo and Redo buffers.
+            actions.Reset();
 
             _mode = mode;
+        }
+
+        private void cleanup()
+        {
+            if (actions != null) {
+                actions.OnUndo -= Repaint;
+                actions.OnRedo -= Repaint;
+            }
+
+            actions.Reset();
+            _saveManager.Cleanup();
         }
 
         private void drawToolbar()

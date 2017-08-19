@@ -14,5 +14,10 @@ namespace UNEB
         public virtual bool Init() { return true; }
 
         public abstract void Do();
+
+        /// <summary>
+        /// Called when the action is removed.
+        /// </summary>
+        public virtual void Disable() { }
     }
 }

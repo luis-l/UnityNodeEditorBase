@@ -1,4 +1,5 @@
 ﻿
+using System.Collections;
 using System.Collections.Generic;
 
 namespace UNEB.Utility
@@ -8,9 +9,8 @@ namespace UNEB.Utility
     /// In order to make more room, the first element (not the top) in the stack is removed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class FiniteStack<T>
+    public class FiniteStack<T> : IEnumerable<T>
     {
-
         private LinkedList<T> _container;
         private int _capacity;
 
@@ -43,9 +43,24 @@ namespace UNEB.Utility
             return lastVal;
         }
 
+        public void Clear()
+        {
+            _container.Clear();
+        }
+
         public int Count
         {
             get { return _container.Count; }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return _container.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _container.GetEnumerator();
         }
     }
 }

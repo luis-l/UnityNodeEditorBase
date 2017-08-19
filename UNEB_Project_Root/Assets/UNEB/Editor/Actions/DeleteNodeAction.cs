@@ -13,13 +13,17 @@ namespace UNEB
     // Each output can have many inputs
     using OutputToInputsPair = Pair<NodeOutput, System.Collections.Generic.List<NodeInput>>;
 
-    public class DeleteNodeAction : UndoableAction, IDisposable
+    public class DeleteNodeAction : UndoableAction
     {
         private NodeGraph _canvas;
         private Node _nodeRemoved = null;
 
         private List<InputToOutputPair> _oldConnectedOutputs;
         private List<OutputToInputsPair> _oldConnectedInputs;
+
+        // The node referenced can only be destroyed if the 
+        // delete action has been redone.
+        private bool _bCanDeleteNode = true;
 
         public DeleteNodeAction()
         {
@@ -61,12 +65,16 @@ namespace UNEB
         {
             _canvas.nodes.Add(_nodeRemoved);
             reconnectOldConnections();
+
+            _bCanDeleteNode = false;
         }
 
         public override void Redo()
         {
             _canvas.Remove(_nodeRemoved);
             disconnectOldConnections();
+
+            _bCanDeleteNode = true;
         }
 
         private void disconnectOldConnections()
@@ -108,10 +116,11 @@ namespace UNEB
             }
         }
 
-        public void Dispose()
+        public override void Disable()
         {
-            if (_nodeRemoved)
+            if (_bCanDeleteNode && _nodeRemoved) {
                 ScriptableObject.DestroyImmediate(_nodeRemoved, true);
+            }
         }
     }
 }

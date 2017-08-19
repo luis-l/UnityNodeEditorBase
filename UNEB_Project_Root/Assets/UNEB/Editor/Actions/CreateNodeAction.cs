@@ -5,10 +5,14 @@ using UnityEngine;
 
 namespace UNEB
 {
-    public class CreateNodeAction : UndoableAction, IDisposable
+    public class CreateNodeAction : UndoableAction
     {
         private NodeGraph _graph;
         private Node _nodeCreated;
+
+        // The node referenced can only be destroyed if the 
+        // create action has been undone.
+        private bool _bCanDeleteNode = false;
 
         public override bool Init()
         {
@@ -32,16 +36,18 @@ namespace UNEB
         public override void Undo()
         {
             _graph.Remove(_nodeCreated);
+            _bCanDeleteNode = true;
         }
 
         public override void Redo()
         {
             _graph.nodes.Add(_nodeCreated);
+            _bCanDeleteNode = false;
         }
 
-        public void Dispose()
+        public override void Disable()
         {
-            if (_nodeCreated) {
+            if (_bCanDeleteNode && _nodeCreated) {
                 ScriptableObject.DestroyImmediate(_nodeCreated, true);
             }
         }
