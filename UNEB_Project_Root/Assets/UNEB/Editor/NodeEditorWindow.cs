@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 
 using NodeEditorFramework.Utilities;
+using UNEB.Utility;
 
 namespace UNEB
 {
@@ -36,6 +37,7 @@ namespace UNEB
         void OnEnable()
         {
             GUIScaleUtility.CheckInit();
+            TextureLib.LoadStandardTextures();
 
             actions = new ActionManager(this);
             editor = new NodeEditor(this);
@@ -57,11 +59,14 @@ namespace UNEB
             // The only way it can be in view mode is if the window is 
             // already opened and the user selects a some graph.
             _mode = Mode.Edit;
+
+            EditorApplication.playmodeStateChanged -= TextureLib.LoadStandardTextures;
+            EditorApplication.playmodeStateChanged += TextureLib.LoadStandardTextures;
         }
 
         void OnDisable()
         {
-            cleanup();
+            _saveManager.Cleanup();
         }
 
         void OnDestroy()
@@ -71,12 +76,18 @@ namespace UNEB
 
         void OnGUI()
         {
+            // Asset removed.
+            if (!graph && !_saveManager.IsInNographState()) {
+                _saveManager.InitState();
+            }
+
             editor.Draw();
             drawToolbar();
 
             triggers.Update();
         }
 
+        /*
         void Update()
         {
             // Check if there is a request to view a graph.
@@ -88,14 +99,13 @@ namespace UNEB
             bool bConditions =
                 graph &&
                 _mode == Mode.View &&
-                EditorApplication.isPlaying
-                /* && graph.IsRunning()*/
-                ;
+                EditorApplication.isPlaying &&
+                graph.IsRunning();
 
             if (bConditions) {
                 Repaint();
             }
-        }
+        } */
 
         private void goToViewMode()
         {
@@ -225,6 +235,8 @@ namespace UNEB
         {
             return _mode;
         }
+
+
 
         /// <summary>
         /// Opens up the node editor window from asset selection.

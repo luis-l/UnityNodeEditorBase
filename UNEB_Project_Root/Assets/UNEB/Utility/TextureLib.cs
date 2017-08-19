@@ -22,6 +22,7 @@ namespace UNEB.Utility
         public static void LoadStandardTextures()
         {
             _textures.Clear();
+            _tintedTextures.Clear();
 
             LoadTexture("Grid");
             LoadTexture("Circle");
@@ -79,7 +80,16 @@ namespace UNEB.Utility
 
             // Check if it already exsists in the tint dictionary.
             if (_tintedTextures.ContainsKey(key)) {
-                return _tintedTextures[key];
+
+                if (_tintedTextures[key]) {
+                    return _tintedTextures[key];
+                }
+
+                // Rebuild texture.
+                else {
+                    _tintedTextures[key] = tintCopy(GetTexture(name), color);
+                    return _tintedTextures[key];
+                }
             }
 
             // Make a new tint from the pre-loaded texture.
@@ -88,29 +98,34 @@ namespace UNEB.Utility
             // Tint the tex and add to tinted tex dictionary.
             if (tex) {
 
-                int pixCount = tex.width * tex.height;
-
-                var tintedTex = new Texture2D(tex.width, tex.height);
-                tintedTex.alphaIsTransparency = true;
-
-                var newPixels = new Color[pixCount];
-                var pixels = tex.GetPixels();
-
-                for (int i = 0; i < pixCount; ++i) {
-                    newPixels[i] = color;
-                    newPixels[i].a = pixels[i].a;
-                }
-
-                tintedTex.SetPixels(newPixels);
-                tintedTex.Apply();
-
+                var tintedTex = tintCopy(tex, color);
                 _tintedTextures.Add(key, tintedTex);
 
                 return tintedTex;
             }
 
-            // Texture not preloaded.
             return null;
+        }
+
+        private static Texture2D tintCopy(Texture2D tex, Color color)
+        {
+            int pixCount = tex.width * tex.height;
+
+            var tintedTex = new Texture2D(tex.width, tex.height);
+            tintedTex.alphaIsTransparency = true;
+
+            var newPixels = new Color[pixCount];
+            var pixels = tex.GetPixels();
+
+            for (int i = 0; i < pixCount; ++i) {
+                newPixels[i] = color;
+                newPixels[i].a = pixels[i].a;
+            }
+
+            tintedTex.SetPixels(newPixels);
+            tintedTex.Apply();
+
+            return tintedTex;
         }
 
         public static string GetTextureFolderPath()
@@ -143,7 +158,7 @@ namespace UNEB.Utility
             return "";
         }
 
-        private class TintedTextureKey
+        private struct TintedTextureKey
         {
             public readonly Color color;
             public readonly string texName;
@@ -161,13 +176,15 @@ namespace UNEB.Utility
 
             public override bool Equals(object obj)
             {
-                var key = obj as TintedTextureKey;
+                if (obj is TintedTextureKey) {
 
-                if (key == null) {
-                    return false;
+                    var key = (TintedTextureKey)obj;
+                    return key.color == color && key.texName == texName;
                 }
 
-                return key.color == color && key.texName == texName;
+                else {
+                    return false;
+                }
             }
         }
     }

@@ -16,8 +16,6 @@ namespace UNEB
         private FiniteStack<UndoableAction> _undoStack;
         private Stack<UndoableAction> _redoStack;
 
-        private List<Action<Event>> _inputActions;
-
         // Caches the current multi-stage action that is currently executing.
         private MultiStageAction _activeMultiAction = null;
 

@@ -19,7 +19,6 @@ namespace UNEB
         private NodeEditorWindow _window;
 
         private Texture2D _gridTex;
-        private Texture2D _knobTex;
         private Texture2D _backTex;
 
         public Color backColor;
@@ -41,11 +40,8 @@ namespace UNEB
             backColor = ColorExtensions.From255(59, 62, 74);
             _knobColor = ColorExtensions.From255(126, 186, 255);
 
-            TextureLib.LoadStandardTextures();
-
             _gridTex = TextureLib.GetTexture("Grid");
             _backTex = TextureLib.GetTexture("Square");
-            _knobTex = TextureLib.GetTintTex("Circle", _knobColor);
 
             _window = w;
         }
@@ -124,7 +120,8 @@ namespace UNEB
             var screenRect = knob.bodyRect;
             screenRect.position = graphToScreenSpace(screenRect.position);
 
-            GUI.DrawTexture(screenRect, _knobTex);
+            var tex = TextureLib.GetTintTex("Circle", _knobColor);
+            GUI.DrawTexture(screenRect, tex);
         }
 
         private void drawConnections()
