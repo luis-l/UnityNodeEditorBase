@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UNEB.Utility;
 
 namespace UNEB
 {
@@ -12,7 +13,9 @@ namespace UNEB
     {
         private NodeEditorWindow _window;
 
-        private Stack<UndoableAction> _undoStack, _redoStack;
+        private FiniteStack<UndoableAction> _undoStack;
+        private Stack<UndoableAction> _redoStack;
+
         private List<Action<Event>> _inputActions;
 
         // Caches the current multi-stage action that is currently executing.
@@ -23,7 +26,7 @@ namespace UNEB
 
         public ActionManager(NodeEditorWindow w)
         {
-            _undoStack = new Stack<UndoableAction>();
+            _undoStack = new FiniteStack<UndoableAction>(100);
             _redoStack = new Stack<UndoableAction>();
 
             _window = w;

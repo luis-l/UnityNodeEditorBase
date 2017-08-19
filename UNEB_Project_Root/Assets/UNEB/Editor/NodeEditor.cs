@@ -6,15 +6,16 @@ using UnityEngine;
 using UnityEditor;
 
 using NodeEditorFramework.Utilities;
+using UNEB.Utility;
 
 namespace UNEB
 {
     public class NodeEditor
     {
         /// <summary>
-        /// The associated canvas to visualize and edit.
+        /// The associated graph to visualize and edit.
         /// </summary>
-        public NodeCanvas canvas;
+        public NodeGraph graph;
         private NodeEditorWindow _window;
 
         private Texture2D _gridTex;
@@ -31,6 +32,9 @@ namespace UNEB
         public static float minZoom = 1f;
         public static float maxZoom = 4f;
         public static float panSpeed = 1.2f;
+
+        public Vector2 panOffset = Vector2.zero;
+        public Vector2 zoom = Vector2.one;
 
         public NodeEditor(NodeEditorWindow w)
         {
@@ -54,15 +58,16 @@ namespace UNEB
                 drawGrid();
             }
 
-            drawCanvasContents();
+            if (graph)
+                drawGraphContents();
         }
 
-        private void drawCanvasContents()
+        private void drawGraphContents()
         {
-            Rect canvasRect = _window.Size;
-            var center = canvasRect.size / 2f;
+            Rect graphRect = _window.Size;
+            var center = graphRect.size / 2f;
 
-            _zoomAdjustment = GUIScaleUtility.BeginScale(ref canvasRect, center, canvas.ZoomScale, false);
+            _zoomAdjustment = GUIScaleUtility.BeginScale(ref graphRect, center, ZoomScale, false);
 
             drawConnectionPreview();
             drawConnections();
@@ -76,11 +81,11 @@ namespace UNEB
             var size = _window.Size.size;
             var center = size / 2f;
 
-            float zoom = canvas.ZoomScale;
+            float zoom = ZoomScale;
 
             // Offset from origin in tile units
-            float xOffset = -(center.x * zoom + canvas.panOffset.x) / _gridTex.width;
-            float yOffset = ((center.y - size.y) * zoom + canvas.panOffset.y) / _gridTex.height;
+            float xOffset = -(center.x * zoom + panOffset.x) / _gridTex.width;
+            float yOffset = ((center.y - size.y) * zoom + panOffset.y) / _gridTex.height;
 
             Vector2 tileOffset = new Vector2(xOffset, yOffset);
 
@@ -96,7 +101,7 @@ namespace UNEB
 
         private void drawNodes()
         {
-            foreach (Node node in canvas.nodes) {
+            foreach (Node node in graph.nodes) {
                 drawNode(node);
                 drawKnobs(node);
             }
@@ -115,23 +120,23 @@ namespace UNEB
 
         private void drawKnob(NodeConnection knob)
         {
-            // Convert the body rect from canvas to screen space.
+            // Convert the body rect from graph to screen space.
             var screenRect = knob.bodyRect;
-            screenRect.position = CanvasToScreenSpace(screenRect.position);
+            screenRect.position = graphToScreenSpace(screenRect.position);
 
             GUI.DrawTexture(screenRect, _knobTex);
         }
 
         private void drawConnections()
         {
-            foreach (Node node in canvas.nodes) {
+            foreach (Node node in graph.nodes) {
 
                 foreach (var output in node.Outputs) {
 
                     foreach (NodeInput input in output.Inputs) {
 
-                        Vector2 start = CanvasToScreenSpace(output.bodyRect.center);
-                        Vector2 end = CanvasToScreenSpace(input.bodyRect.center);
+                        Vector2 start = graphToScreenSpace(output.bodyRect.center);
+                        Vector2 end = graphToScreenSpace(input.bodyRect.center);
 
                         DrawBezier(start, end, _knobColor);
                     }
@@ -144,16 +149,16 @@ namespace UNEB
             var output = _window.state.selectedOutput;
 
             if (output != null) {
-                Vector2 start = CanvasToScreenSpace(output.bodyRect.center);
+                Vector2 start = graphToScreenSpace(output.bodyRect.center);
                 DrawBezier(start, Event.current.mousePosition, Color.gray);
             }
         }
 
         private void drawNode(Node node)
         {
-            // Convert the node rect from canvas to screen space.
+            // Convert the node rect from graph to screen space.
             Rect screenRect = node.bodyRect;
-            screenRect.position = CanvasToScreenSpace(screenRect.position);
+            screenRect.position = graphToScreenSpace(screenRect.position);
 
             // The node contents are grouped together within the node body.
             BeginGroup(screenRect, backgroundStyle, backColor);
@@ -165,7 +170,7 @@ namespace UNEB
             // Draw the contents inside the node body, automatically laidout.
             GUILayout.BeginArea(localRect, GUIStyle.none);
 
-            node.OnGUI();
+            node.OnNodeGUI();
 
             GUILayout.EndArea();
             GUI.EndGroup();
@@ -214,35 +219,40 @@ namespace UNEB
 
         public void Pan(Vector2 delta)
         {
-            canvas.panOffset += delta * canvas.ZoomScale * panSpeed;
+            panOffset += delta * ZoomScale * panSpeed;
         }
 
         public void Zoom(float zoomDirection)
         {
             float scale = (zoomDirection < 0f) ? (1f - zoomDelta) : (1f + zoomDelta);
-            canvas.zoom *= scale;
+            zoom *= scale;
 
-            float cap = Mathf.Clamp(canvas.zoom.x, minZoom, maxZoom);
-            canvas.zoom.Set(cap, cap);
+            float cap = Mathf.Clamp(zoom.x, minZoom, maxZoom);
+            zoom.Set(cap, cap);
         }
 
-        /// <summary>
-        /// Convertes the screen position to canvas space.
-        /// </summary>
-        public Vector2 ScreenToCanvasSpace(Vector2 screenPos)
+        public float ZoomScale
         {
-            var canvasRect = _window.Size;
-            var center = canvasRect.size / 2f;
-            return (screenPos - center) * canvas.ZoomScale - canvas.panOffset;
+            get { return zoom.x; }
         }
 
         /// <summary>
-        /// Returns the mouse position in canvas space.
+        /// Convertes the screen position to graph space.
+        /// </summary>
+        public Vector2 ScreenToGraphSpace(Vector2 screenPos)
+        {
+            var graphRect = _window.Size;
+            var center = graphRect.size / 2f;
+            return (screenPos - center) * ZoomScale - panOffset;
+        }
+
+        /// <summary>
+        /// Returns the mouse position in graph space.
         /// </summary>
         /// <returns></returns>
         public Vector2 MousePosition()
         {
-            return ScreenToCanvasSpace(Event.current.mousePosition);
+            return ScreenToGraphSpace(Event.current.mousePosition);
         }
 
         /// <summary>
@@ -256,34 +266,34 @@ namespace UNEB
         }
 
         /// <summary>
-        /// Converts the canvas position to screen space.
+        /// Converts the graph position to screen space.
         /// This only works for geometry inside the GUIScaleUtility.BeginScale()
         /// </summary>
-        /// <param name="canvasPos"></param>
+        /// <param name="graphPos"></param>
         /// <returns></returns>
-        public Vector2 CanvasToScreenSpace(Vector2 canvasPos)
+        public Vector2 graphToScreenSpace(Vector2 graphPos)
         {
-            return canvasPos + _zoomAdjustment + canvas.panOffset;
+            return graphPos + _zoomAdjustment + panOffset;
         }
 
         /// <summary>
-        /// Converts the canvas position to screen space.
+        /// Converts the graph position to screen space.
         /// This only works for geometry inside the GUIScaleUtility.BeginScale().
         /// </summary>
-        /// <param name="canvasPos"></param>
-        public void CanvasToScreenSpace(ref Vector2 canvasPos)
+        /// <param name="graphPos"></param>
+        public void graphToScreenSpace(ref Vector2 graphPos)
         {
-            canvasPos += _zoomAdjustment + canvas.panOffset;
+            graphPos += _zoomAdjustment + panOffset;
         }
 
         /// <summary>
-        /// Converts the canvas position to screen space.
+        /// Converts the graph position to screen space.
         /// This works for geometry NOT inside the GUIScaleUtility.BeginScale().
         /// </summary>
-        /// <param name="canvasPos"></param>
-        public void CanvasToScreenSpaceZoomAdj(ref Vector2 canvasPos)
+        /// <param name="graphPos"></param>
+        public void graphToScreenSpaceZoomAdj(ref Vector2 graphPos)
         {
-            canvasPos = CanvasToScreenSpace(canvasPos) / canvas.ZoomScale;
+            graphPos = graphToScreenSpace(graphPos) / ZoomScale;
         }
 
         /// <summary>
@@ -292,9 +302,13 @@ namespace UNEB
         /// <param name="callback"></param>
         public bool OnMouseOverNode(Action<Node> callback)
         {
-            for (int i = canvas.nodes.Count - 1; i >= 0; --i) {
+            if (!graph) {
+                return false;
+            }
 
-                Node node = canvas.nodes[i];
+            for (int i = graph.nodes.Count - 1; i >= 0; --i) {
+
+                Node node = graph.nodes[i];
 
                 if (IsUnderMouse(node.bodyRect)) {
                     callback(node);
@@ -313,7 +327,11 @@ namespace UNEB
         /// <returns></returns>
         public bool OnMouseOverOutput(Action<NodeOutput> callback)
         {
-            foreach (var node in canvas.nodes) {
+            if (!graph) {
+                return false;
+            }
+
+            foreach (var node in graph.nodes) {
 
                 foreach (var output in node.Outputs) {
 
@@ -334,7 +352,11 @@ namespace UNEB
         /// <returns></returns>
         public bool OnMouseOverInput(Action<NodeInput> callback)
         {
-            foreach (var node in canvas.nodes) {
+            if (!graph) {
+                return false;
+            }
+
+            foreach (var node in graph.nodes) {
 
                 foreach (var input in node.Inputs) {
 
@@ -355,7 +377,11 @@ namespace UNEB
         /// <returns></returns>
         public bool OnMouseOverNode_OrInput(Action<Node> callback)
         {
-            foreach (var node in canvas.nodes) {
+            if (!graph) {
+                return false;
+            }
+
+            foreach (var node in graph.nodes) {
 
                 if (IsUnderMouse(node.bodyRect)) {
                     callback(node);

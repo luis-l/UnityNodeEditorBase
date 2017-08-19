@@ -23,8 +23,8 @@ namespace UNEB
 
         public override void Do()
         {
-            NodeCanvas canvas = manager.window.canvas;
-            _draggingNode.bodyRect.position += Event.current.delta * canvas.ZoomScale * dragSpeed;
+            NodeEditor editor = manager.window.editor;
+            _draggingNode.bodyRect.position += Event.current.delta * editor.ZoomScale * dragSpeed;
         }
 
         public override void OnActionStart()

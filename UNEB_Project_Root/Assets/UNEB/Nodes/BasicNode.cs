@@ -6,11 +6,12 @@ namespace UNEB
 {
     public class BasicNode : Node
     {
-
         private int _someInt = 0;
 
-        public BasicNode()
+        public override void Init()
         {
+            base.Init();
+
             name = "Basic Node";
 
             AddInput("Input");

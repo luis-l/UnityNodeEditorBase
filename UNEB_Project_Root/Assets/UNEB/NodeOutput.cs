@@ -7,17 +7,16 @@ namespace UNEB
 {
     public class NodeOutput : NodeConnection
     {
+        [SerializeField]
+        private bool _bCanHaveMultipleConnections;
 
-        public readonly bool bCanHaveMultipleConnections;
+        [SerializeField]
+        private List<NodeInput> _inputs = new List<NodeInput>();
 
-        private List<NodeInput> _inputs;
-
-        public NodeOutput(Node parent, bool canHaveMultipleConnections = true)
-            : base(parent)
+        public virtual void Init(Node parent, bool multipleConnections = true)
         {
-            name = "output";
-            bCanHaveMultipleConnections = canHaveMultipleConnections;
-            _inputs = new List<NodeInput>();
+            base.Init(parent);
+            _bCanHaveMultipleConnections = multipleConnections;
         }
 
         public IEnumerable<NodeInput> Inputs
@@ -98,14 +97,13 @@ namespace UNEB
 
         public void RemoveAll()
         {
-            // We cache the list of connected inputs because in order
-            // to disconnect them, they must be removed from the _inputs list
-            // first.
-            var inputsCache = new List<NodeInput>(_inputs);
+            // Cache the inputs since in order to disconnect them,
+            // they must be removed from _inputs List.
+            var inputs = new List<NodeInput>(_inputs);
 
             _inputs.Clear();
 
-            foreach (NodeInput input in inputsCache) {
+            foreach (NodeInput input in inputs) {
                 parentNode.OnInputConnectionRemoved(input);
                 input.Disconnect();
             }
@@ -130,6 +128,19 @@ namespace UNEB
         public override float GetNodeAnchor()
         {
             return parentNode.bodyRect.xMax;
+        }
+
+        public bool bCanHaveMultipleConnections
+        {
+            get { return _bCanHaveMultipleConnections; }
+        }
+
+        public static NodeOutput Create(Node parent)
+        {
+            var output = ScriptableObject.CreateInstance<NodeOutput>();
+            output.Init(parent);
+
+            return output;
         }
     }
 }

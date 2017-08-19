@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UNEB.Utility;
 
 namespace UNEB
 {
@@ -90,21 +91,23 @@ namespace UNEB
             };
 
             Pair<string, Action>[] canvasContext = 
-        { 
-            ContextItem("Basic Node", createBaseNode)
-        };
+            { 
+                ContextItem("Basic Node", createBaseNode)
+            };
 
             var canvasTrigger = Create<ContextTrigger>().Build(canvasContext).EventOnly(EventType.ContextClick);
             canvasTrigger.triggers.Add(isMouseOverCanvas);
+            canvasTrigger.triggers.Add(isGraphValid);
 
             Pair<string, Action>[] nodeContext = 
-        {
-            ContextItem("Copy Node", () => { Debug.Log("Not Implemented"); }),
-            ContextItem("Delete Node", _manager.RunUndoableAction<DeleteNodeAction>)
-        };
+            {
+                ContextItem("Copy Node", () => { Debug.Log("Not Implemented"); }),
+                ContextItem("Delete Node", _manager.RunUndoableAction<DeleteNodeAction>)
+            };
 
             var nodeTrigger = Create<ContextTrigger>().Build(nodeContext).EventOnly(EventType.ContextClick);
             nodeTrigger.triggers.Add(isMouseOverNode);
+            nodeTrigger.triggers.Add(isGraphValid);
         }
 
         private void setupMultiStageTriggers()
@@ -179,7 +182,7 @@ namespace UNEB
         private void onSingleSelected(Node node)
         {
             _manager.window.state.selectedNode = node;
-            _manager.window.canvas.PushToEnd(node);
+            _manager.window.graph.PushToEnd(node);
         }
 
         private void onOutputKnobSelected(NodeOutput output)
@@ -227,6 +230,11 @@ namespace UNEB
         private NodeEditorWindow window
         {
             get { return _manager.window; }
+        }
+
+        private bool isGraphValid()
+        {
+            return window.graph != null;
         }
 
         public Pair<string, Action> ContextItem(string label, Action a)

@@ -4,21 +4,22 @@ using UnityEngine;
 
 namespace UNEB
 {
-    public abstract class NodeConnection
+    public abstract class NodeConnection : ScriptableObject
     {
-
         public static readonly Vector2 kMinSize = new Vector2(15f, 15f);
         public static readonly Vector2 kMinHalfSize = kMinSize / 2f;
 
         public Rect bodyRect = new Rect(Vector2.zero, kMinSize);
-        public string name = "knob";
-
+        
         public System.Func<object> getValue;
 
+        [SerializeField]
         protected Node parentNode;
-        public NodeConnection(Node parentNode)
+
+        public virtual void Init(Node parent)
         {
-            this.parentNode = parentNode;
+            name = "connection";
+            parentNode = parent;
         }
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace UNEB
 
         public abstract GUIStyle GetStyle();
 
-        public virtual void OnGUI(int order)
+        public virtual void OnConnectionGUI(int order)
         {
             OnNameGUI();
 

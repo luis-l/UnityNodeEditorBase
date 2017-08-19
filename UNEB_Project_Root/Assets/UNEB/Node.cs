@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UNEB.Utility;
 
 namespace UNEB
 {
     /// <summary>
     /// The visual representation of a logic unit such as an object or function.
     /// </summary>
-    public class Node
+    public class Node : ScriptableObject
     {
         public static readonly Vector2 kDefaultSize = new Vector2(140f, 110f);
 
@@ -32,22 +33,27 @@ namespace UNEB
         /// </summary>
         public Rect bodyRect;
 
-        public string name = "Node";
-
         /// <summary>
         /// How much additional offset to apply when resizing.
         /// </summary>
         public const float resizePaddingX = 20f;
 
+        [SerializeField]
         private List<NodeOutput> _outputs = new List<NodeOutput>();
+
+        [SerializeField]
         private List<NodeInput> _inputs = new List<NodeInput>();
 
-        public Node()
+        /// <summary>
+        /// Use this for initialization.
+        /// </summary>
+        public virtual void Init()
         {
+            name = "Node";
             bodyRect.size = kDefaultSize;
         }
 
-        public virtual void OnGUI()
+        public virtual void OnNodeGUI()
         {
             OnNodeHeaderGUI();
             OnConnectionsGUI();
@@ -72,8 +78,8 @@ namespace UNEB
                 GUILayout.BeginHorizontal();
 
                 // Render the knob layout horizontally.
-                if (i < inputCount) _inputs[i].OnGUI(i);
-                if (i < outputCount) _outputs[i].OnGUI(i);
+                if (i < inputCount) _inputs[i].OnConnectionGUI(i);
+                if (i < outputCount) _outputs[i].OnConnectionGUI(i);
 
                 GUILayout.EndHorizontal();
             }
@@ -128,7 +134,7 @@ namespace UNEB
 
         public NodeInput AddInput(string name = "input")
         {
-            var input = new NodeInput(this);
+            var input = NodeInput.Create(this);
             input.name = name;
             _inputs.Add(input);
 
@@ -137,7 +143,7 @@ namespace UNEB
 
         public NodeOutput AddOutput(string name = "output")
         {
-            var output = new NodeOutput(this);
+            var output = NodeOutput.Create(this);
             output.name = name;
             _outputs.Add(output);
 

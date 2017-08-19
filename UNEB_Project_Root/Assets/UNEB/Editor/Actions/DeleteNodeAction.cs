@@ -1,7 +1,9 @@
 ﻿
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UNEB.Utility;
 
 namespace UNEB
 {
@@ -11,9 +13,9 @@ namespace UNEB
     // Each output can have many inputs
     using OutputToInputsPair = Pair<NodeOutput, System.Collections.Generic.List<NodeInput>>;
 
-    public class DeleteNodeAction : UndoableAction
+    public class DeleteNodeAction : UndoableAction, IDisposable
     {
-        private NodeCanvas _canvas;
+        private NodeGraph _canvas;
         private Node _nodeRemoved = null;
 
         private List<InputToOutputPair> _oldConnectedOutputs;
@@ -32,7 +34,7 @@ namespace UNEB
 
         public override void Do()
         {
-            _canvas = manager.window.canvas;
+            _canvas = manager.window.graph;
             _nodeRemoved = manager.window.state.selectedNode;
             _canvas.Remove(_nodeRemoved);
 
@@ -104,6 +106,12 @@ namespace UNEB
                     output.Add(input);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            if (_nodeRemoved)
+                ScriptableObject.DestroyImmediate(_nodeRemoved, true);
         }
     }
 }

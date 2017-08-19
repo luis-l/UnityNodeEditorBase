@@ -6,11 +6,12 @@ namespace UNEB
 {
     public class NodeInput : NodeConnection
     {
+        [SerializeField]
         private NodeOutput _connectedOutput;
 
-        public NodeInput(Node parent)
-            : base(parent)
+        public override void Init(Node parent)
         {
+            base.Init(parent);
             name = "input";
         }
 
@@ -84,6 +85,14 @@ namespace UNEB
         public override float GetNodeAnchor()
         {
             return parentNode.bodyRect.xMin;
+        }
+
+        public static NodeInput Create(Node parent)
+        {
+            var input = ScriptableObject.CreateInstance<NodeInput>();
+            input.Init(parent);
+
+            return input;
         }
     }
 }

@@ -1,12 +1,13 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace UNEB
 {
-    public class CreateNodeAction : UndoableAction
+    public class CreateNodeAction : UndoableAction, IDisposable
     {
-        private NodeCanvas _canvas;
+        private NodeGraph _graph;
         private Node _nodeCreated;
 
         public override bool Init()
@@ -17,11 +18,11 @@ namespace UNEB
 
         public override void Do()
         {
-            _canvas = manager.window.canvas;
+            _graph = manager.window.graph;
 
             var state = manager.window.state;
 
-            _nodeCreated = _canvas.CreateNode(state.typeToCreate);
+            _nodeCreated = SaveManager.CreateNode(state.typeToCreate, _graph);
             _nodeCreated.bodyRect.position = manager.window.state.lastClickedPosition;
 
             // Done with this type creation.
@@ -30,12 +31,19 @@ namespace UNEB
 
         public override void Undo()
         {
-            _canvas.Remove(_nodeCreated);
+            _graph.Remove(_nodeCreated);
         }
 
         public override void Redo()
         {
-            _canvas.nodes.Add(_nodeCreated);
+            _graph.nodes.Add(_nodeCreated);
+        }
+
+        public void Dispose()
+        {
+            if (_nodeCreated) {
+                ScriptableObject.DestroyImmediate(_nodeCreated, true);
+            }
         }
     }
 }
