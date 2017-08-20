@@ -42,9 +42,6 @@ namespace UNEB
         /// Gets called right before the graph is saved.
         /// Can be used to setup things before saving like sorting nodes.
         /// </summary>
-        public virtual void OnSave()
-        {
-
-        }
+        public virtual void OnSave() { }
     }
 }

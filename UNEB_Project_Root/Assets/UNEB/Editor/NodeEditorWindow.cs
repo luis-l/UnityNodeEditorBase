@@ -166,6 +166,7 @@ namespace UNEB
         {
             var menu = new GenericMenu();
 
+            menu.AddItem(new GUIContent("Home"), false, editor.HomeView);
             menu.AddItem(new GUIContent("Zoom In"), false, () => { editor.Zoom(-1); });
             menu.AddItem(new GUIContent("Zoom Out"), false, () => { editor.Zoom(1); });
 

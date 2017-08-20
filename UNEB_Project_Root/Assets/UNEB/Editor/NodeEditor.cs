@@ -20,12 +20,15 @@ namespace UNEB
 
         private Texture2D _gridTex;
         private Texture2D _backTex;
+        private Texture2D _circleTex;
 
         public Color backColor;
         private Color _knobColor;
 
         // To keep track of zooming.
         private Vector2 _zoomAdjustment;
+
+        public static readonly Rect kCenter = new Rect(0, 0, 10, 10);
 
         public static float zoomDelta = 0.1f;
         public static float minZoom = 1f;
@@ -42,6 +45,7 @@ namespace UNEB
 
             _gridTex = TextureLib.GetTexture("Grid");
             _backTex = TextureLib.GetTexture("Square");
+            _circleTex = TextureLib.GetTexture("Circle");
 
             _window = w;
         }
@@ -65,6 +69,7 @@ namespace UNEB
 
             _zoomAdjustment = GUIScaleUtility.BeginScale(ref graphRect, center, ZoomScale, false);
 
+            drawCrosshair();
             drawConnectionPreview();
             drawConnections();
             drawNodes();
@@ -93,6 +98,54 @@ namespace UNEB
 
             // Draw tiled background
             GUI.DrawTextureWithTexCoords(_window.Size, _gridTex, new Rect(tileOffset, tileAmount));
+        }
+
+        private void drawCrosshair()
+        {
+            var rect = kCenter;
+
+            rect.size *= ZoomScale;
+            rect.center = Vector2.zero;
+
+            rect.position = graphToScreenSpace(rect.position);
+            
+            var guicolor = GUI.color;
+            GUI.color = Color.gray;
+
+            // Draw center reticle.
+            GUI.DrawTexture(rect, _circleTex);
+
+            GUI.color = guicolor;
+
+            drawAxes();
+        }
+
+        private void drawAxes()
+        {
+            var handleColor = Handles.color;
+            Handles.color = Color.gray;
+
+            // Draw axes. Make sure to scale based on zoom.
+            Vector2 up = Vector2.up * _window.Size.height * ZoomScale;
+            Vector2 right = Vector2.right * _window.Size.width * ZoomScale;
+            Vector2 down = -up;
+            Vector2 left = -right;
+
+            // Make sure the axes follow the pan.
+            up.y -= panOffset.y;
+            down.y -= panOffset.y;
+            right.x -= panOffset.x;
+            left.x -= panOffset.x;
+
+            up = graphToScreenSpace(up);
+            down = graphToScreenSpace(down);
+            right = graphToScreenSpace(right);
+            left = graphToScreenSpace(left);
+
+            Handles.DrawLine(right, left);
+            Handles.DrawLine(up, down);
+
+            Handles.color = handleColor;
         }
 
         private void drawNodes()
@@ -208,6 +261,56 @@ namespace UNEB
             GUI.BeginGroup(r, style);
 
             GUI.color = old;
+        }
+
+        #endregion
+
+        #region View Operations
+
+        public void HomeView()
+        {
+            if (!graph) {
+                return;
+            }
+
+            float xMin = float.MaxValue;
+            float xMax = float.MinValue;
+            float yMin = float.MaxValue;
+            float yMax = float.MinValue;
+
+            foreach (var node in graph.nodes) {
+
+                Rect r = node.bodyRect;
+
+                if (r.xMin < xMin) {
+                    xMin = r.xMin;
+                }
+
+                if (r.xMax > xMax) {
+                    xMax = r.xMax;
+                }
+
+                if (r.yMin < yMin) {
+                    yMin = r.yMin;
+                }
+
+                if (r.yMax > yMax) {
+                    yMax = r.yMax;
+                }
+            }
+
+            //xMax += Node.kDefaultSize.x;
+            //yMax += Node.kDefaultSize.y;
+
+            var boundingView = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+
+            panOffset = boundingView.center;
+            //zoom = Vector2.one * 2;
+        }
+
+        public void ViewNode(Node node)
+        {
+
         }
 
         #endregion
