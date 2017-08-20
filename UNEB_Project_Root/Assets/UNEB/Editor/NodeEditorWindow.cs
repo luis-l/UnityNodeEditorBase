@@ -55,7 +55,6 @@ namespace UNEB
             actions.OnRedo += Repaint;
 
             // Always start in edit mode.
-            //
             // The only way it can be in view mode is if the window is 
             // already opened and the user selects a some graph.
             _mode = Mode.Edit;
@@ -82,42 +81,6 @@ namespace UNEB
             drawToolbar();
 
             triggers.Update();
-        }
-
-        /*
-        void Update()
-        {
-            // Check if there is a request to view a graph.
-            goToViewMode();
-
-            // Update the window during the play mode when the window
-            // is viewing a graph instance of a game object.
-            // This is to quicky update all changes of the graph.
-            bool bConditions =
-                graph &&
-                _mode == Mode.View &&
-                EditorApplication.isPlaying &&
-                graph.IsRunning();
-
-            if (bConditions) {
-                Repaint();
-            }
-        } */
-
-        private void goToViewMode()
-        {
-            /*
-            if (!EditorApplication.isPlaying || !Selection.activeTransform) {
-                return;
-            }
-
-            // Here goes the code to find some component associated to a graph object that
-            // can be viewed during runtime. Ex) Behavior tree.
-
-            // Cleanup before putting new graph.
-            cleanup();
-
-            SetGraph(graphToView, Mode.View); */
         }
 
         public void SetGraph(NodeGraph g, Mode mode = Mode.Edit)
@@ -243,8 +206,6 @@ namespace UNEB
         {
             return _mode;
         }
-
-
 
         /// <summary>
         /// Opens up the node editor window from asset selection.

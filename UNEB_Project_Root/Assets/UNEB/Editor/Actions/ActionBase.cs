@@ -16,8 +16,8 @@ namespace UNEB
         public abstract void Do();
 
         /// <summary>
-        /// Called when the action is removed.
+        /// Called when the action is removed from the undo/redo buffers.
         /// </summary>
-        public virtual void Disable() { }
+        public virtual void OnDestroy() { }
     }
 }

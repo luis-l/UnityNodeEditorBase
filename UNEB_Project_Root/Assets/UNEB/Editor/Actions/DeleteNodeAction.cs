@@ -118,7 +118,7 @@ namespace UNEB
             }
         }
 
-        public override void Disable()
+        public override void OnDestroy()
         {
             if (_bCanDeleteNode && _nodeRemoved) {
                 ScriptableObject.DestroyImmediate(_nodeRemoved, true);

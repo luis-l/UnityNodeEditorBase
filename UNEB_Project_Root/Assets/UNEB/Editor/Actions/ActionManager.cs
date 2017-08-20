@@ -132,11 +132,11 @@ namespace UNEB
         public void Reset()
         {
             foreach (var action in _undoStack) {
-                action.Disable();
+                action.OnDestroy();
             }
 
             foreach (var action in _redoStack) {
-                action.Disable();
+                action.OnDestroy();
             }
 
             _activeMultiAction = null;
