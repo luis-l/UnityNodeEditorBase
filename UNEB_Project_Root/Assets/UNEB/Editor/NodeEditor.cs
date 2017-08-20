@@ -74,6 +74,8 @@ namespace UNEB
 
             if (graph)
                 drawGraphContents();
+
+            drawMode();
         }
 
         private void drawGraphContents()
@@ -245,6 +247,24 @@ namespace UNEB
 
             GUILayout.EndArea();
             GUI.EndGroup();
+        }
+
+        /// <summary>
+        /// Draw the window mode in the background.
+        /// </summary>
+        public void drawMode()
+        {
+            if (!graph) {
+                GUI.Label(_modeStatusRect, new GUIContent("No Graph Set"), ModeStatusStyle);
+            }
+
+            else if (_window.GetMode() == NodeEditorWindow.Mode.Edit) {
+                GUI.Label(_modeStatusRect, new GUIContent("Edit"), ModeStatusStyle);
+            }
+
+            else {
+                GUI.Label(_modeStatusRect, new GUIContent("View"), ModeStatusStyle);
+            }
         }
 
         /// <summary>
@@ -603,6 +623,24 @@ namespace UNEB
                 }
 
                 return _backgroundStyle;
+            }
+        }
+
+
+        private static Rect _modeStatusRect = new Rect(20f, 20f, 250f, 150f);
+        private static GUIStyle _modeStatusStyle;
+        private static GUIStyle ModeStatusStyle
+        {
+            get
+            {
+                if (_modeStatusStyle == null) {
+                    _modeStatusStyle = new GUIStyle();
+                    _modeStatusStyle.fontSize = 36;
+                    _modeStatusStyle.fontStyle = FontStyle.Bold;
+                    _modeStatusStyle.normal.textColor = new Color(1f, 1f, 1f, 0.2f);
+                }
+
+                return _modeStatusStyle;
             }
         }
 

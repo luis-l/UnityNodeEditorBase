@@ -97,8 +97,6 @@ namespace UNEB
             int maxCount = (int)Mathf.Max(inputCount, outputCount);
 
             // The entire knob section is stacked rows of inputs and outputs.
-            GUILayout.BeginVertical();
-
             for (int i = 0; i < maxCount; ++i) {
 
                 GUILayout.BeginHorizontal();
@@ -109,8 +107,6 @@ namespace UNEB
 
                 GUILayout.EndHorizontal();
             }
-
-            GUILayout.EndVertical();
         }
 
         /// <summary>

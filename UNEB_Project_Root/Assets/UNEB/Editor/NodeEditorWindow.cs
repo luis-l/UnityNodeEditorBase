@@ -127,6 +127,10 @@ namespace UNEB
                 createSettingsMenu();
             }
 
+            if (DropdownButton("Tools", kToolbarButtonWidth)) {
+                createToolsMenu();
+            }
+
             // Make the toolbar extend all throughout the window extension.
             GUILayout.FlexibleSpace();
             drawGraphName();
@@ -188,9 +192,49 @@ namespace UNEB
             menu.DropDown(new Rect(155f, kToolbarHeight, 0f, 0f));
         }
 
+        private void createToolsMenu()
+        {
+            var menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Add Test Nodes"), false, addTestNodes);
+            menu.AddItem(new GUIContent("Clear Nodes"), false, clearNodes);
+
+            menu.DropDown(new Rect(215f, kToolbarHeight, 0f, 0f));
+        }
+
         public bool DropdownButton(string name, float width)
         {
             return GUILayout.Button(name, EditorStyles.toolbarDropDown, GUILayout.Width(width));
+        }
+
+        private void addTestNodes()
+        {
+            if (graph) {
+
+                for (int x = 0; x < 10; x++) {
+                    for (int y = 0; y < 10; y++) {
+
+                        var node = SaveManager.CreateNode<BasicNode>(graph);
+
+                        float xpos = x * Node.kDefaultSize.x * 1.5f;
+                        float ypos = y * Node.kDefaultSize.y * 1.5f;
+                        node.bodyRect.position = new Vector2(xpos, ypos);
+                    }
+                }
+            }
+        }
+
+        private void clearNodes()
+        {
+            if (graph) {
+
+                foreach (var node in graph.nodes) {
+                    ScriptableObject.DestroyImmediate(node, true);
+                }
+
+                actions.Reset();
+                graph.nodes.Clear();
+            }
         }
 
         /// <summary>
