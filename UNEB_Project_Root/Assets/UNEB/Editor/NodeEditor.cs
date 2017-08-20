@@ -13,6 +13,16 @@ namespace UNEB
     public class NodeEditor
     {
         /// <summary>
+        /// The rect bounds defining the recticle at the grid center.
+        /// </summary>
+        public static readonly Rect kReticleRect = new Rect(0, 0, 8, 8);
+
+        public static float zoomDelta = 0.1f;
+        public static float minZoom = 1f;
+        public static float maxZoom = 4f;
+        public static float panSpeed = 1.2f;
+
+        /// <summary>
         /// The associated graph to visualize and edit.
         /// </summary>
         public NodeGraph graph;
@@ -27,16 +37,8 @@ namespace UNEB
 
         // To keep track of zooming.
         private Vector2 _zoomAdjustment;
-
-        public static readonly Rect kCenter = new Rect(0, 0, 8, 8);
-
-        public static float zoomDelta = 0.1f;
-        public static float minZoom = 1f;
-        public static float maxZoom = 4f;
-        public static float panSpeed = 1.2f;
-
-        public Vector2 panOffset = Vector2.zero;
         private Vector2 _zoom = Vector2.one;
+        public Vector2 panOffset = Vector2.zero;
 
         public NodeEditor(NodeEditorWindow w)
         {
@@ -102,7 +104,7 @@ namespace UNEB
 
         private void drawCrosshair()
         {
-            var rect = kCenter;
+            var rect = kReticleRect;
 
             rect.size *= ZoomScale;
             rect.center = Vector2.zero;
@@ -314,13 +316,18 @@ namespace UNEB
             // Only try to change the zoom if the views are of different sizes.
             if (Mathf.Abs(maxViewDim - minWinDim) > 0.001f) {
 
+                float dimRatio = maxViewDim / minWinDim;
+
                 // If the current window view does not contain the bounding view then zoom.
                 // This means that the view is larger.
+                // Scale up to fit.
                 if (maxViewDim > minWinDim) {
-                    ZoomScale = maxViewDim / minWinDim;
+                    ZoomScale = dimRatio;
                 }
+
+                // Scale down to fit.
                 else {
-                    ZoomScale *= maxViewDim / minWinDim;
+                    ZoomScale *= dimRatio;
                 }
             }
         }
