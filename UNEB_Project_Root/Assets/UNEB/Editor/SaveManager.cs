@@ -211,6 +211,7 @@ namespace UNEB
 
             AssetDatabase.CreateAsset(graph, path);
             AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
 
             return graph;
         }
@@ -343,15 +344,7 @@ namespace UNEB
         private void saveConnection(NodeConnection conn)
         {
             if (!AssetDatabase.Contains(conn)) {
-
-                string path = getCurrentGraphPath();
-
-                if (!string.IsNullOrEmpty(path)) {
-                    AssetDatabase.AddObjectToAsset(conn, path);
-                }
-                else {
-                    Debug.LogError("Invalid path: " + path);
-                }
+                AssetDatabase.AddObjectToAsset(conn, _window.graph);
             }
         }
 
