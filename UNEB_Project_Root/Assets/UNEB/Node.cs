@@ -262,7 +262,7 @@ namespace UNEB
             }
         }
 
-        public static GUIStyle _defStyle;
+        private static GUIStyle _defStyle;
         public static GUIStyle DefaultStyle
         {
             get
@@ -278,20 +278,24 @@ namespace UNEB
             }
         }
 
+        private static GUIStyle _headerStyle;
         public GUIStyle HeaderStyle
         {
             get
             {
-                var style = new GUIStyle();
+                if (_headerStyle == null) {
 
-                style.stretchWidth = true;
-                style.alignment = TextAnchor.MiddleLeft;
-                style.padding.left = 5;
-                style.normal.textColor = Color.white * 0.9f;
-                style.normal.background = TextureLib.GetTintTex("Square", ColorExtensions.From255(79, 82, 94));
-                style.fixedHeight = kHeaderHeight;
+                    _headerStyle = new GUIStyle();
 
-                return style;
+                    _headerStyle.stretchWidth = true;
+                    _headerStyle.alignment = TextAnchor.MiddleLeft;
+                    _headerStyle.padding.left = 5;
+                    _headerStyle.normal.textColor = Color.white * 0.9f;
+                    _headerStyle.fixedHeight = kHeaderHeight;
+                }
+
+                _headerStyle.normal.background = TextureLib.GetTintTex("Square", ColorExtensions.From255(79, 82, 94));
+                return _headerStyle;
             }
         }
 

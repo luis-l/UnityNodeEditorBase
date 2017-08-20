@@ -20,7 +20,7 @@ namespace UNEB
         public static float zoomDelta = 0.1f;
         public static float minZoom = 1f;
         public static float maxZoom = 4f;
-        public static float panSpeed = 1.2f;
+        public static float panSpeed = 1.5f;
 
         /// <summary>
         /// The associated graph to visualize and edit.
