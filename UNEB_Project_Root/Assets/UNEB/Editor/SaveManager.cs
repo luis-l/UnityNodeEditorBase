@@ -164,7 +164,7 @@ namespace UNEB
                 // Optional, set reference to graph: node.graph = g
 
                 node.Init();
-                g.AddNode(node);
+                g.Add(node);
                 return node;
             }
 
@@ -187,7 +187,7 @@ namespace UNEB
             // Optional, set reference to graph: node.graph = g
 
             node.Init();
-            g.AddNode(node);
+            g.Add(node);
             return node;
         }
 

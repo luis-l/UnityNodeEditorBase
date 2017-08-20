@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -14,6 +15,12 @@ namespace UNEB.Utility
         private LinkedList<T> _container;
         private int _capacity;
 
+        /// <summary>
+        /// Called when the stack runs out of space and removes
+        /// the first item (bottom of stack) to make room.
+        /// </summary>
+        public event Action<T> OnRemoveBottomItem;
+
         public FiniteStack(int capacity)
         {
             _container = new LinkedList<T>();
@@ -26,7 +33,12 @@ namespace UNEB.Utility
 
             // Out of room, remove the first element in the stack.
             if (_container.Count == _capacity) {
+
+                T first = _container.First.Value;
                 _container.RemoveFirst();
+
+                if (OnRemoveBottomItem != null)
+                    OnRemoveBottomItem(first);
             }
         }
 

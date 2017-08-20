@@ -33,17 +33,26 @@ namespace UNEB
         private Texture2D _circleTex;
 
         public Color backColor;
-        private Color _knobColor;
+        public Color knobColor;
+        public Color guideColor;
 
         // To keep track of zooming.
         private Vector2 _zoomAdjustment;
         private Vector2 _zoom = Vector2.one;
         public Vector2 panOffset = Vector2.zero;
 
+        /// <summary>
+        /// Enables and disables drawing the guide to the grid center.
+        /// </summary>
+        public bool bDrawGuide = false;
+
         public NodeEditor(NodeEditorWindow w)
         {
             backColor = ColorExtensions.From255(59, 62, 74);
-            _knobColor = ColorExtensions.From255(126, 186, 255);
+            knobColor = ColorExtensions.From255(126, 186, 255);
+            
+            guideColor = Color.gray;
+            guideColor.a = 0.3f;
 
             _gridTex = TextureLib.GetTexture("Grid");
             _backTex = TextureLib.GetTexture("Square");
@@ -71,7 +80,7 @@ namespace UNEB
 
             _zoomAdjustment = GUIScaleUtility.BeginScale(ref graphRect, center, ZoomScale, false);
 
-            drawCrosshair();
+            drawGridOverlay();
             drawConnectionPreview();
             drawConnections();
             drawNodes();
@@ -102,31 +111,31 @@ namespace UNEB
             GUI.DrawTextureWithTexCoords(_window.Size, _gridTex, new Rect(tileOffset, tileAmount));
         }
 
-        private void drawCrosshair()
+        // Handles drawing things over the grid such as axes.
+        private void drawGridOverlay()
+        {
+            drawAxes();
+            drawGridCenter();
+
+            if (bDrawGuide) {
+                drawGuide();
+                _window.Repaint();
+            }
+        }
+
+        private void drawGridCenter()
         {
             var rect = kReticleRect;
 
             rect.size *= ZoomScale;
             rect.center = Vector2.zero;
-
             rect.position = graphToScreenSpace(rect.position);
             
-            var guicolor = GUI.color;
-            GUI.color = Color.gray;
-
-            // Draw center reticle.
-            GUI.DrawTexture(rect, _circleTex);
-
-            GUI.color = guicolor;
-
-            drawAxes();
+            DrawTintTexture(rect, _circleTex, Color.gray);
         }
 
         private void drawAxes()
         {
-            var handleColor = Handles.color;
-            Handles.color = Color.gray;
-
             // Draw axes. Make sure to scale based on zoom.
             Vector2 up = Vector2.up * _window.Size.height * ZoomScale;
             Vector2 right = Vector2.right * _window.Size.width * ZoomScale;
@@ -144,10 +153,17 @@ namespace UNEB
             right = graphToScreenSpace(right);
             left = graphToScreenSpace(left);
 
-            Handles.DrawLine(right, left);
-            Handles.DrawLine(up, down);
+            DrawLine(right, left, Color.gray);
+            DrawLine(up, down, Color.gray);
+        }
 
-            Handles.color = handleColor;
+        /// <summary>
+        /// Shows where the center of the grid is.
+        /// </summary>
+        private void drawGuide()
+        {
+            Vector2 gridCenter = graphToScreenSpace(Vector2.zero);
+            DrawLine(gridCenter, Event.current.mousePosition, guideColor);
         }
 
         private void drawNodes()
@@ -175,7 +191,7 @@ namespace UNEB
             var screenRect = knob.bodyRect;
             screenRect.position = graphToScreenSpace(screenRect.position);
 
-            var tex = TextureLib.GetTintTex("Circle", _knobColor);
+            var tex = TextureLib.GetTintTex("Circle", knobColor);
             GUI.DrawTexture(screenRect, tex);
         }
 
@@ -190,7 +206,7 @@ namespace UNEB
                         Vector2 start = graphToScreenSpace(output.bodyRect.center);
                         Vector2 end = graphToScreenSpace(input.bodyRect.center);
 
-                        DrawBezier(start, end, _knobColor);
+                        DrawBezier(start, end, knobColor);
                     }
                 }
             }
@@ -250,9 +266,28 @@ namespace UNEB
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public static void DrawLine(Vector2 start, Vector2 end)
+        public static void DrawLine(Vector2 start, Vector2 end, Color color)
         {
+            var handleColor = Handles.color;
+            Handles.color = color;
+
             Handles.DrawLine(start, end);
+            Handles.color = handleColor;
+        }
+
+        /// <summary>
+        /// Draws a GUI texture with a tint.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="t"></param>
+        /// <param name="c"></param>
+        public static void DrawTintTexture(Rect r, Texture t, Color c)
+        {
+            var guiColor = GUI.color;
+            GUI.color = c;
+
+            GUI.DrawTexture(r, t);
+            GUI.color = guiColor;
         }
 
         public static void BeginGroup(Rect r, GUIStyle style, Color color)
@@ -268,6 +303,11 @@ namespace UNEB
         #endregion
 
         #region View Operations
+
+        public void ToggleDrawGuide()
+        {
+            bDrawGuide = !bDrawGuide;
+        }
 
         public void HomeView()
         {

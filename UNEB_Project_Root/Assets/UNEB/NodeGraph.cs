@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,11 @@ namespace UNEB
     /// </summary>
     public class NodeGraph : ScriptableObject
     {
+        /// <summary>
+        /// The types of nodes accepted by the graph.
+        /// </summary>
+        public static HashSet<Type> nodeTypes = new HashSet<Type>();
+
         [HideInInspector]
         public List<Node> nodes = new List<Node>();
 
@@ -17,11 +23,15 @@ namespace UNEB
         /// It is recommended that the save manager adds the nodes.
         /// </summary>
         /// <param name="n"></param>
-        public void AddNode(Node n)
+        public void Add(Node n)
         {
             nodes.Add(n);
         }
 
+        /// <summary>
+        /// Removes a node from the graph but it is not destroyed.
+        /// </summary>
+        /// <param name="node"></param>
         public void Remove(Node node)
         {
             nodes.Remove(node);

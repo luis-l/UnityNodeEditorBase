@@ -15,7 +15,7 @@ namespace UNEB
 
     public class DeleteNodeAction : UndoableAction
     {
-        private NodeGraph _canvas;
+        private NodeGraph _graph;
         private Node _nodeRemoved = null;
 
         private List<InputToOutputPair> _oldConnectedOutputs;
@@ -38,9 +38,9 @@ namespace UNEB
 
         public override void Do()
         {
-            _canvas = manager.window.graph;
+            _graph = manager.window.graph;
             _nodeRemoved = manager.window.state.selectedNode;
-            _canvas.Remove(_nodeRemoved);
+            _graph.Remove(_nodeRemoved);
 
             // Remember all the old outputs the inputs were connected to.
             foreach (var input in _nodeRemoved.Inputs) {
@@ -65,7 +65,7 @@ namespace UNEB
 
         public override void Undo()
         {
-            _canvas.nodes.Add(_nodeRemoved);
+            _graph.Add(_nodeRemoved);
             reconnectOldConnections();
 
             _bCanDeleteNode = false;
@@ -73,7 +73,7 @@ namespace UNEB
 
         public override void Redo()
         {
-            _canvas.Remove(_nodeRemoved);
+            _graph.Remove(_nodeRemoved);
             disconnectOldConnections();
 
             _bCanDeleteNode = true;

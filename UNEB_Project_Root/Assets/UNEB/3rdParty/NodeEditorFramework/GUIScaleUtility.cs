@@ -13,17 +13,12 @@ namespace NodeEditorFramework.Utilities
         private static bool compabilityMode;
         private static bool initiated;
 
-        // cache the reflected methods
-        private static FieldInfo currentGUILayoutCache;
-        private static FieldInfo currentTopLevelGroup;
-
         // Delegates to the reflected methods
         private static Func<Rect> GetTopRectDelegate;
         private static Func<Rect> topmostRectDelegate;
 
         // Delegate accessors
         public static Rect getTopRect { get { return (Rect)GetTopRectDelegate.Invoke(); } }
-        public static Rect getTopRectScreenSpace { get { return (Rect)topmostRectDelegate.Invoke(); } }
 
         // Rect stack for manipulating groups
         public static List<Rect> currentRectStack { get; private set; }

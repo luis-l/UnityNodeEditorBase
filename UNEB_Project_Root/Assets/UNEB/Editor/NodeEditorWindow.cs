@@ -123,6 +123,10 @@ namespace UNEB
                 createViewMenu();
             }
 
+            if (DropdownButton("Settings", kToolbarButtonWidth + 10f)) {
+                createSettingsMenu();
+            }
+
             // Make the toolbar extend all throughout the window extension.
             GUILayout.FlexibleSpace();
             drawGraphName();
@@ -173,6 +177,15 @@ namespace UNEB
             menu.AddItem(new GUIContent("Zoom Out"), false, () => { editor.Zoom(1); });
 
             menu.DropDown(new Rect(105f, kToolbarHeight, 0f, 0f));
+        }
+
+        private void createSettingsMenu()
+        {
+            var menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Show Guide"), editor.bDrawGuide, editor.ToggleDrawGuide);
+            
+            menu.DropDown(new Rect(155f, kToolbarHeight, 0f, 0f));
         }
 
         public bool DropdownButton(string name, float width)

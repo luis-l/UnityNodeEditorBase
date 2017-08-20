@@ -28,6 +28,13 @@ namespace UNEB
             _redoStack = new Stack<UndoableAction>();
 
             _window = w;
+
+            // Makes sure that the action cleans up after itself
+            // when it is removed from the undo buffer.
+            _undoStack.OnRemoveBottomItem += (action) =>
+            {
+                action.OnDestroy();
+            };
         }
 
         public void Update()
@@ -53,7 +60,7 @@ namespace UNEB
 
             if (action.Init()) {
 
-                _redoStack.Clear();
+                clearRedoStack();
                 _undoStack.Push(action);
                 action.Do();
             }
@@ -93,7 +100,7 @@ namespace UNEB
             // We check if the action ended properly so it can be stored in undo.
             if (_activeMultiAction.OnActionEnd()) {
 
-                _redoStack.Clear();
+                clearRedoStack();
                 _undoStack.Push(_activeMultiAction);
             }
 
@@ -131,17 +138,27 @@ namespace UNEB
 
         public void Reset()
         {
-            foreach (var action in _undoStack) {
-                action.OnDestroy();
-            }
+            _activeMultiAction = null;
+            clearUndoStack();
+            clearRedoStack();
+        }
 
+        private void clearRedoStack()
+        {
             foreach (var action in _redoStack) {
                 action.OnDestroy();
             }
 
-            _activeMultiAction = null;
-            _undoStack.Clear();
             _redoStack.Clear();
+        }
+
+        private void clearUndoStack()
+        {
+            foreach (var action in _undoStack) {
+                action.OnDestroy();
+            }
+
+            _undoStack.Clear();
         }
 
         public NodeEditorWindow window

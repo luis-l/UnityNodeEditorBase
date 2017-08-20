@@ -41,7 +41,7 @@ namespace UNEB
 
         public override void Redo()
         {
-            _graph.nodes.Add(_nodeCreated);
+            _graph.Add(_nodeCreated);
             _bCanDeleteNode = false;
         }
 
