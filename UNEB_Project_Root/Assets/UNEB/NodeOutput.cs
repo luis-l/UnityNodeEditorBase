@@ -135,11 +135,12 @@ namespace UNEB
             get { return _bCanHaveMultipleConnections; }
         }
 
-        public static NodeOutput Create(Node parent)
+        public static NodeOutput Create(Node parent, bool multipleConnections = true)
         {
             var output = ScriptableObject.CreateInstance<NodeOutput>();
-            output.Init(parent);
+            output.Init(parent, multipleConnections);
 
+            NodeConnection.OnConnectionCreated(output);
             return output;
         }
     }

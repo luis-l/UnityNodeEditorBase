@@ -92,6 +92,7 @@ namespace UNEB
             var input = ScriptableObject.CreateInstance<NodeInput>();
             input.Init(parent);
 
+            NodeConnection.OnConnectionCreated(input);
             return input;
         }
     }

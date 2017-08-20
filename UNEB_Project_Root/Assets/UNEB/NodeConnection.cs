@@ -13,6 +13,8 @@ namespace UNEB
         
         public System.Func<object> getValue;
 
+        public static System.Action<NodeConnection> OnConnectionCreated;
+
         [SerializeField]
         protected Node parentNode;
 

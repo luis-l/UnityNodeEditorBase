@@ -160,8 +160,19 @@ namespace UNEB
 
             // Make the toolbar extend all throughout the window extension.
             GUILayout.FlexibleSpace();
-
+            drawGraphName();
+            
             EditorGUILayout.EndHorizontal();
+        }
+
+        private void drawGraphName()
+        {
+            string graphName = "None";
+            if (graph != null) {
+                graphName = graph.name;
+            }
+
+            GUILayout.Label(graphName);
         }
 
         private void createFileMenu()

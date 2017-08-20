@@ -65,6 +65,9 @@ namespace UNEB
             _saveFSM.OnStateChangedEvent += () => { _saveOp = SaveOp.None; };
 
             InitState();
+
+            NodeConnection.OnConnectionCreated -= saveConnection;
+            NodeConnection.OnConnectionCreated += saveConnection;
         }
 
         /// <summary>
@@ -328,7 +331,6 @@ namespace UNEB
         // Saves the current graph (not a temp graph).
         private bool save()
         {
-            saveConnections();
             _window.graph.OnSave();
             AssetDatabase.SaveAssets();
 
@@ -336,25 +338,11 @@ namespace UNEB
             return true;
         }
 
-        // Helper function to save the node connections
-        private void saveConnections()
+        // Helper method for the NodeConnection.OnConnectionCreated callback.
+        private void saveConnection(NodeConnection conn)
         {
-            string currentPath = getCurrentGraphPath();
-
-            foreach (var node in _window.graph.nodes) {
-
-                foreach (var input in node.Inputs) {
-
-                    if (!AssetDatabase.Contains(input)) {
-                        AssetDatabase.AddObjectToAsset(input, currentPath);
-                    }
-                }
-
-                foreach (var output in node.Outputs) {
-                    if (!AssetDatabase.Contains(output)) {
-                        AssetDatabase.AddObjectToAsset(output, currentPath);
-                    }
-                }
+            if (!AssetDatabase.Contains(conn)) {
+                AssetDatabase.AddObjectToAsset(conn, getCurrentGraphPath());
             }
         }
 
