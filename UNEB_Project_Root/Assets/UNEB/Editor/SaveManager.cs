@@ -333,6 +333,7 @@ namespace UNEB
         {
             _window.graph.OnSave();
             AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
 
             _window.ShowNotification(new GUIContent("Graph Saved"));
             return true;
@@ -342,7 +343,15 @@ namespace UNEB
         private void saveConnection(NodeConnection conn)
         {
             if (!AssetDatabase.Contains(conn)) {
-                AssetDatabase.AddObjectToAsset(conn, getCurrentGraphPath());
+
+                string path = getCurrentGraphPath();
+
+                if (!string.IsNullOrEmpty(path)) {
+                    AssetDatabase.AddObjectToAsset(conn, path);
+                }
+                else {
+                    Debug.LogError("Invalid path: " + path);
+                }
             }
         }
 
