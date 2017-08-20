@@ -294,7 +294,6 @@ namespace UNEB
                     _headerStyle.fixedHeight = kHeaderHeight;
                 }
 
-                _headerStyle.normal.background = TextureLib.GetTintTex("Square", ColorExtensions.From255(79, 82, 94));
                 return _headerStyle;
             }
         }

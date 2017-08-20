@@ -52,7 +52,20 @@ namespace UNEB
 
         public virtual void OnNameGUI()
         {
-            GUILayout.Label(name, GetStyle());
+            GUILayout.Label(Content, GetStyle());
+        }
+
+        private GUIContent _content;
+        private GUIContent Content
+        {
+            get
+            {
+                if (_content == null) {
+                    _content = new GUIContent(name);
+                }
+
+                return _content;
+            }
         }
 
         /// <summary>

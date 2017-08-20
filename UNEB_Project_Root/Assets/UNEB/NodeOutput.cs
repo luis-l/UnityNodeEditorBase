@@ -13,6 +13,8 @@ namespace UNEB
         [SerializeField]
         private List<NodeInput> _inputs = new List<NodeInput>();
 
+        private GUIStyle _style;
+
         public virtual void Init(Node parent, bool multipleConnections = true)
         {
             base.Init(parent);
@@ -111,14 +113,17 @@ namespace UNEB
 
         public override GUIStyle GetStyle()
         {
-            var style = new GUIStyle();
+            if (_style == null) {
+                
+                _style = new GUIStyle();
 
-            style.fixedHeight = kMinSize.y + Node.kKnobOffset;
-            style.alignment = TextAnchor.MiddleRight;
-            style.normal.textColor = Color.white * 0.9f;
-            style.padding.right = (int)kMinHalfSize.x + 5;
+                _style.fixedHeight = kMinSize.y + Node.kKnobOffset;
+                _style.alignment = TextAnchor.MiddleRight;
+                _style.normal.textColor = Color.white * 0.9f;
+                _style.padding.right = (int)kMinHalfSize.x + 5;
+            }
 
-            return style;
+            return _style;
         }
 
         /// <summary>

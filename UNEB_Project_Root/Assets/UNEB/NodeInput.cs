@@ -9,6 +9,8 @@ namespace UNEB
         [SerializeField]
         private NodeOutput _connectedOutput;
 
+        private GUIStyle _style;
+
         public override void Init(Node parent)
         {
             base.Init(parent);
@@ -68,14 +70,17 @@ namespace UNEB
 
         public override GUIStyle GetStyle()
         {
-            var style = new GUIStyle();
+            if (_style == null) {
 
-            style.fixedHeight = kMinSize.y + Node.kKnobOffset;
-            style.alignment = TextAnchor.MiddleLeft;
-            style.normal.textColor = Color.white * 0.9f;
-            style.padding.left = (int)kMinHalfSize.x + 5;
+                _style = new GUIStyle();
 
-            return style;
+                _style.fixedHeight = kMinSize.y + Node.kKnobOffset;
+                _style.alignment = TextAnchor.MiddleLeft;
+                _style.normal.textColor = Color.white * 0.9f;
+                _style.padding.left = (int)kMinHalfSize.x + 5;
+            }
+
+            return _style;
         }
 
         /// <summary>

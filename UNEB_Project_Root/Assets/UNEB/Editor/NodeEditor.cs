@@ -20,7 +20,7 @@ namespace UNEB
         public static float zoomDelta = 0.1f;
         public static float minZoom = 1f;
         public static float maxZoom = 4f;
-        public static float panSpeed = 1.5f;
+        public static float panSpeed = 1.2f;
 
         /// <summary>
         /// The associated graph to visualize and edit.
@@ -31,6 +31,8 @@ namespace UNEB
         private Texture2D _gridTex;
         private Texture2D _backTex;
         private Texture2D _circleTex;
+        private Texture2D _knobTex;
+        private Texture2D _headerTex;
 
         public Color backColor;
         public Color knobColor;
@@ -67,6 +69,7 @@ namespace UNEB
         {
             if (Event.current.type == EventType.Repaint) {
                 drawGrid();
+                updateTextures();
             }
 
             if (graph)
@@ -191,8 +194,7 @@ namespace UNEB
             var screenRect = knob.bodyRect;
             screenRect.position = graphToScreenSpace(screenRect.position);
 
-            var tex = TextureLib.GetTintTex("Circle", knobColor);
-            GUI.DrawTexture(screenRect, tex);
+            GUI.DrawTexture(screenRect, _knobTex);
         }
 
         private void drawConnections()
@@ -238,6 +240,7 @@ namespace UNEB
             // Draw the contents inside the node body, automatically laidout.
             GUILayout.BeginArea(localRect, GUIStyle.none);
 
+            node.HeaderStyle.normal.background = _headerTex;
             node.OnNodeGUI();
 
             GUILayout.EndArea();
@@ -300,6 +303,13 @@ namespace UNEB
             GUI.color = old;
         }
 
+        // TODO: Call after exiting playmode.
+        private void updateTextures()
+        {
+            _knobTex = TextureLib.GetTintTex("Circle", knobColor);
+            _headerTex = TextureLib.GetTintTex("Square", ColorExtensions.From255(79, 82, 94));
+        }
+
         #endregion
 
         #region View Operations
@@ -311,7 +321,8 @@ namespace UNEB
 
         public void HomeView()
         {
-            if (!graph) {
+            if (!graph || graph.nodes.Count == 0) {
+                panOffset = Vector2.zero;
                 return;
             }
 
