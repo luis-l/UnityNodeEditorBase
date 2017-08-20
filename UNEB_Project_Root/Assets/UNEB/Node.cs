@@ -64,6 +64,11 @@ namespace UNEB
                 });
         }
 
+        void OnEnable()
+        {
+            hideFlags = HideFlags.HideInHierarchy;
+        }
+
         /// <summary>
         /// Use this for initialization.
         /// </summary>

@@ -18,6 +18,11 @@ namespace UNEB
         [SerializeField]
         protected Node parentNode;
 
+        void OnEnable()
+        {
+            hideFlags = HideFlags.HideInHierarchy;
+        }
+
         public virtual void Init(Node parent)
         {
             name = "connection";
