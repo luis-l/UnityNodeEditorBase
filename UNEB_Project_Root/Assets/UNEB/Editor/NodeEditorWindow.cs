@@ -58,6 +58,8 @@ namespace UNEB
             // The only way it can be in view mode is if the window is 
             // already opened and the user selects a some graph.
             _mode = Mode.Edit;
+
+            editor.HomeView();
         }
 
         void OnDisable()

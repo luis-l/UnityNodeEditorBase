@@ -183,6 +183,8 @@ namespace UNEB
         {
             _manager.window.state.selectedNode = node;
             _manager.window.graph.PushToEnd(node);
+
+            Selection.activeObject = node;
         }
 
         private void onOutputKnobSelected(NodeOutput output)

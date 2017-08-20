@@ -28,7 +28,7 @@ namespace UNEB
         // To keep track of zooming.
         private Vector2 _zoomAdjustment;
 
-        public static readonly Rect kCenter = new Rect(0, 0, 10, 10);
+        public static readonly Rect kCenter = new Rect(0, 0, 8, 8);
 
         public static float zoomDelta = 0.1f;
         public static float minZoom = 1f;
@@ -36,7 +36,7 @@ namespace UNEB
         public static float panSpeed = 1.2f;
 
         public Vector2 panOffset = Vector2.zero;
-        public Vector2 zoom = Vector2.one;
+        private Vector2 _zoom = Vector2.one;
 
         public NodeEditor(NodeEditorWindow w)
         {
@@ -299,18 +299,30 @@ namespace UNEB
                 }
             }
 
-            //xMax += Node.kDefaultSize.x;
-            //yMax += Node.kDefaultSize.y;
-
             var boundingView = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
 
-            panOffset = boundingView.center;
-            //zoom = Vector2.one * 2;
-        }
+            // Center the pan in the bounding view.
+            panOffset = -boundingView.center;
 
-        public void ViewNode(Node node)
-        {
+            // If the min dimension of the window is greater than the max dimension of the
+            // view, then we do not need to worry about zooming to fit the nodes.
+            // Else, we modify the zoom by the ratio between the dimensions.
+            var winSize = _window.Size;
+            float minWinDim = Mathf.Min(winSize.width, winSize.height) * ZoomScale;
+            float maxViewDim = Mathf.Max(boundingView.width, boundingView.height);
 
+            // Only try to change the zoom if the views are of different sizes.
+            if (Mathf.Abs(maxViewDim - minWinDim) > 0.001f) {
+
+                // If the current window view does not contain the bounding view then zoom.
+                // This means that the view is larger.
+                if (maxViewDim > minWinDim) {
+                    ZoomScale = maxViewDim / minWinDim;
+                }
+                else {
+                    ZoomScale *= maxViewDim / minWinDim;
+                }
+            }
         }
 
         #endregion
@@ -325,15 +337,21 @@ namespace UNEB
         public void Zoom(float zoomDirection)
         {
             float scale = (zoomDirection < 0f) ? (1f - zoomDelta) : (1f + zoomDelta);
-            zoom *= scale;
 
-            float cap = Mathf.Clamp(zoom.x, minZoom, maxZoom);
-            zoom.Set(cap, cap);
+            _zoom *= scale;
+
+            float cap = Mathf.Clamp(_zoom.x, minZoom, maxZoom);
+            _zoom.Set(cap, cap);
         }
 
         public float ZoomScale
         {
-            get { return zoom.x; }
+            get { return _zoom.x; }
+            set
+            {
+                float z = Mathf.Clamp(value, minZoom, maxZoom);
+                _zoom.Set(z, z);
+            }
         }
 
         /// <summary>
