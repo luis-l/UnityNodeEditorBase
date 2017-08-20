@@ -211,8 +211,8 @@ namespace UNEB
         {
             if (graph) {
 
-                for (int x = 0; x < 7; x++) {
-                    for (int y = 0; y < 7; y++) {
+                for (int x = 0; x < 10; x++) {
+                    for (int y = 0; y < 10; y++) {
 
                         var node = SaveManager.CreateNode<BasicNode>(graph);
 
