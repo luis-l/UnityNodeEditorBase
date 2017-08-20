@@ -48,7 +48,7 @@ namespace Bonsai.Utility
             _states.Add(s.Value, s);
         }
 
-        public void AddTransition(State start, State end, Func<bool> condition, Action onMakingTransition)
+        public void AddTransition(State start, State end, Func<bool> condition, Func<bool> onMakingTransition)
         {
             var t = new Transition(condition);
             t.onMakingTransition = onMakingTransition;
@@ -158,22 +158,22 @@ namespace Bonsai.Utility
 
             if (validTrans != null) {
 
-                // Call on state exit.
-                if (_currentState.onStateExit != null)
-                    _currentState.onStateExit();
+                // Call on making transition.
+                if (validTrans.onMakingTransition()) {
 
-                // Call on making transition/
-                if (validTrans.onMakingTransition != null)
-                    validTrans.onMakingTransition();
+                    // Call on state exit.
+                    if (_currentState.onStateExit != null)
+                        _currentState.onStateExit();
 
-                // Change the state to the next one.
-                _currentState = validTrans.NextState;
+                    // Change the state to the next one.
+                    _currentState = validTrans.NextState;
 
-                // Call on state enter.
-                if (_currentState.onStateEnter != null)
-                    _currentState.onStateEnter();
+                    // Call on state enter.
+                    if (_currentState.onStateEnter != null)
+                        _currentState.onStateEnter();
 
-                OnStateChangedEvent();
+                    OnStateChangedEvent();
+                }
             }
         }
 
@@ -188,8 +188,9 @@ namespace Bonsai.Utility
 
             /// <summary>
             /// Called after the 'from' state exits and before the 'to' state enters.
+            /// If this fails, then it goes back to the starting state.
             /// </summary>
-            public Action onMakingTransition;
+            public Func<bool> onMakingTransition = () => { return true; };
 
             public Transition()
             {

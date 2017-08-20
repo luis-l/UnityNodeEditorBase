@@ -22,8 +22,8 @@ namespace UNEB
         private List<OutputToInputsPair> _oldConnectedInputs;
 
         // The node referenced can only be destroyed if the 
-        // delete action has been redone.
-        private bool _bCanDeleteNode = true;
+        // delete action has been done or redone.
+        private bool _bCanDeleteNode = false;
 
         public DeleteNodeAction()
         {
@@ -59,6 +59,8 @@ namespace UNEB
             }
 
             disconnectOldConnections();
+
+            _bCanDeleteNode = true;
         }
 
         public override void Undo()

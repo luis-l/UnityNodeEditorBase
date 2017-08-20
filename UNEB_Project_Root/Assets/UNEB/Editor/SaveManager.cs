@@ -38,28 +38,28 @@ namespace UNEB
 
             _saveFSM = new StateMachine<SaveState>();
 
-            var noTree = new StateMachine<SaveState>.State(SaveState.NoGraph);
-            var tempTree = new StateMachine<SaveState>.State(SaveState.TempGraph);
-            var savedTree = new StateMachine<SaveState>.State(SaveState.SavedGraph);
+            var noGraph = new StateMachine<SaveState>.State(SaveState.NoGraph);
+            var tempGraph = new StateMachine<SaveState>.State(SaveState.TempGraph);
+            var savedGraph = new StateMachine<SaveState>.State(SaveState.SavedGraph);
 
-            _saveFSM.AddState(noTree);
-            _saveFSM.AddState(tempTree);
-            _saveFSM.AddState(savedTree);
+            _saveFSM.AddState(noGraph);
+            _saveFSM.AddState(tempGraph);
+            _saveFSM.AddState(savedGraph);
 
             // Actions to take when starting out on a window with no graph.
-            _saveFSM.AddTransition(noTree, tempTree, isNewRequested, createNewOnto_Window_WithTempOrEmpty);
-            _saveFSM.AddTransition(noTree, savedTree, isLoadRequested, loadOnto_EmptyWindow);
+            _saveFSM.AddTransition(noGraph, tempGraph, isNewRequested, createNewOnto_Window_WithTempOrEmpty);
+            _saveFSM.AddTransition(noGraph, savedGraph, isLoadRequested, loadOnto_EmptyWindow);
 
             // Actions to take when the window has a temp graph.
-            _saveFSM.AddTransition(tempTree, tempTree, isNewRequested, createNewOnto_Window_WithTempOrEmpty);
-            _saveFSM.AddTransition(tempTree, savedTree, isSaveAsRequested, saveTempAs);
-            _saveFSM.AddTransition(tempTree, savedTree, isLoadRequested, loadOnto_Window_WithTempgraph);
+            _saveFSM.AddTransition(tempGraph, tempGraph, isNewRequested, createNewOnto_Window_WithTempOrEmpty);
+            _saveFSM.AddTransition(tempGraph, savedGraph, isSaveOrSaveAsRequested, saveTempAs);
+            _saveFSM.AddTransition(tempGraph, savedGraph, isLoadRequested, loadOnto_Window_WithTempgraph);
 
             // Actions to take when the window has a valid graph (already saved).
-            _saveFSM.AddTransition(savedTree, savedTree, isSaveRequested, save);
-            _saveFSM.AddTransition(savedTree, savedTree, isSaveAsRequested, saveCloneAs);
-            _saveFSM.AddTransition(savedTree, savedTree, isLoadRequested, loadOnto_Window_WithSavedgraph);
-            _saveFSM.AddTransition(savedTree, tempTree, isNewRequested, createNewOnto_Window_WithSavedgraph);
+            _saveFSM.AddTransition(savedGraph, savedGraph, isSaveRequested, save);
+            _saveFSM.AddTransition(savedGraph, savedGraph, isSaveAsRequested, saveCloneAs);
+            _saveFSM.AddTransition(savedGraph, savedGraph, isLoadRequested, loadOnto_Window_WithSavedgraph);
+            _saveFSM.AddTransition(savedGraph, tempGraph, isNewRequested, createNewOnto_Window_WithSavedgraph);
 
             // Consume the save operation even after the transition is made.
             _saveFSM.OnStateChangedEvent += () => { _saveOp = SaveOp.None; };
@@ -230,56 +230,64 @@ namespace UNEB
         }
 
         // Create a new temp graph on an empty window or with a temp graph.
-        private void createNewOnto_Window_WithTempOrEmpty()
+        private bool createNewOnto_Window_WithTempOrEmpty()
         {
             _window.SetGraph(createNew());
+            return true;
         }
 
         // Saves the current active graph then loads a new graph.
-        private void createNewOnto_Window_WithSavedgraph()
+        private bool createNewOnto_Window_WithSavedgraph()
         {
             // Save the old graph to avoid loss.
             AssetDatabase.SaveAssets();
 
             _window.SetGraph(createNew());
+
+            return true;
         }
 
         // Load a graph to a window that has no graph active.
-        private void loadOnto_EmptyWindow()
+        private bool loadOnto_EmptyWindow()
         {
             loadGraph(getGraphFilePath());
+            return true;
         }
 
         // Load a graph to a window that has a temp graph active.
-        private void loadOnto_Window_WithTempgraph()
+        private bool loadOnto_Window_WithTempgraph()
         {
             string path = getGraphFilePath();
 
-            if (path != null) {
+            if (!string.IsNullOrEmpty(path)) {
 
                 // Get rid of the temporary graph.
                 AssetDatabase.DeleteAsset(getCurrentGraphPath());
-
                 loadGraph(path);
+                return true;
             }
+
+            return false;
         }
 
         // Load a graph to a window that has a saved graph active.
-        private void loadOnto_Window_WithSavedgraph()
+        private bool loadOnto_Window_WithSavedgraph()
         {
             string path = getGraphFilePath();
 
-            if (path != null) {
+            if (!string.IsNullOrEmpty(path)) {
 
                 // Save the old graph.
                 save();
-
                 loadGraph(path);
+                return true;
             }
+
+            return false;
         }
 
         // Makes the temporary graph into a saved graph.
-        private void saveTempAs()
+        private bool saveTempAs()
         {
             string newPath = getSaveFilePath();
             string currentPath = getCurrentGraphPath();
@@ -289,15 +297,17 @@ namespace UNEB
             if (result.Length == 0) {
                 AssetDatabase.MoveAsset(currentPath, newPath);
                 save();
+                return true;
             }
 
             else {
                 Debug.LogError(result);
+                return false;
             }
         }
 
         // Copies the current active graph to a new location.
-        private void saveCloneAs()
+        private bool saveCloneAs()
         {
             string newPath = getSaveFilePath();
 
@@ -309,17 +319,21 @@ namespace UNEB
                 AssetDatabase.SetMainObject(_window.graph, currentPath);
 
                 save();
+                return true;
             }
+
+            return false;
         }
 
         // Saves the current graph (not a temp graph).
-        private void save()
+        private bool save()
         {
             saveConnections();
             _window.graph.OnSave();
             AssetDatabase.SaveAssets();
 
             _window.ShowNotification(new GUIContent("Graph Saved"));
+            return true;
         }
 
         // Helper function to save the node connections
@@ -374,6 +388,7 @@ namespace UNEB
         private bool isLoadRequested() { return _saveOp == SaveOp.Load; }
         private bool isSaveRequested() { return _saveOp == SaveOp.Save; }
         private bool isSaveAsRequested() { return _saveOp == SaveOp.SaveAs; }
+        private bool isSaveOrSaveAsRequested() { return isSaveAsRequested() || isSaveRequested(); }
 
         /*
          * These are the events that drive the save manager.
@@ -393,7 +408,8 @@ namespace UNEB
                 return "";
             }
 
-            return tempRoot.Dir(kTempFileName + _window.GetInstanceID().ToString().Ext("asset"));
+            string filename = kTempFileName + _window.GetInstanceID().ToString().Ext("asset");
+            return tempRoot.Dir(filename);
         }
 
         internal void SetState(SaveState state)
