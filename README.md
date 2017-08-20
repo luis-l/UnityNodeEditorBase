@@ -4,6 +4,7 @@ Basic editor extension functionality to get a node editor up and running. (Click
 
 Main Features
 * Editor view with panning, zooming, and grid background
+* Save System using Scriptable Objects
 * Customizable GUI
 * Create, delete, drag nodes
 * Create, change, delete connections between nodes
