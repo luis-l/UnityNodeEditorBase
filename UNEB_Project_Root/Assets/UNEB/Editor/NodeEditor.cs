@@ -341,35 +341,43 @@ namespace UNEB
                 }
             }
 
-            var boundingView = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+            // Add some padding so nodes do not appear on the edge of the view.
+            xMin -= Node.kDefaultSize.x;
+            xMax += Node.kDefaultSize.x;
+            yMin -= Node.kDefaultSize.y;
+            yMax += Node.kDefaultSize.y;
+            var nodesArea = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
 
             // Center the pan in the bounding view.
-            panOffset = -boundingView.center;
+            panOffset = -nodesArea.center;
 
-            // If the min dimension of the window is greater than the max dimension of the
-            // view, then we do not need to worry about zooming to fit the nodes.
-            // Else, we modify the zoom by the ratio between the dimensions.
+            // Calculate the required zoom based on the ratio between the window view and node area rect.
             var winSize = _window.Size;
-            float minWinDim = Mathf.Min(winSize.width, winSize.height) * ZoomScale;
-            float maxViewDim = Mathf.Max(boundingView.width, boundingView.height);
+            float zoom = 1f;
 
-            // Only try to change the zoom if the views are of different sizes.
-            if (Mathf.Abs(maxViewDim - minWinDim) > 0.001f) {
+            // Use the view width to determine zoom to fit the entire node area width.
+            if (nodesArea.width > nodesArea.height) {
 
-                float dimRatio = maxViewDim / minWinDim;
+                float widthRatio = nodesArea.width / winSize.width;
+                zoom = widthRatio;
 
-                // If the current window view does not contain the bounding view then zoom.
-                // This means that the view is larger.
-                // Scale up to fit.
-                if (maxViewDim > minWinDim) {
-                    ZoomScale = dimRatio;
-                }
-
-                // Scale down to fit.
-                else {
-                    ZoomScale *= dimRatio;
+                if (widthRatio < 1f) {
+                    zoom = 1 / widthRatio;
                 }
             }
+
+            // Use the height to determine zoom.
+            else {
+
+                float heightRatio = nodesArea.height / winSize.height;
+                zoom = heightRatio;
+
+                if (heightRatio < 1f) {
+                    zoom = 1 / heightRatio;
+                }
+            }
+
+            ZoomScale = zoom;
         }
 
         #endregion
