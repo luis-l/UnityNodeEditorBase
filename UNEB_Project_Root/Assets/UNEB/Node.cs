@@ -31,6 +31,7 @@ namespace UNEB
         /// <summary>
         /// The rect of the node in canvas space.
         /// </summary>
+        [HideInInspector]
         public Rect bodyRect;
 
         /// <summary>
@@ -38,10 +39,10 @@ namespace UNEB
         /// </summary>
         public const float resizePaddingX = 20f;
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private List<NodeOutput> _outputs = new List<NodeOutput>();
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private List<NodeInput> _inputs = new List<NodeInput>();
 
         /// <summary>

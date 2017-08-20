@@ -9,13 +9,14 @@ namespace UNEB
         public static readonly Vector2 kMinSize = new Vector2(15f, 15f);
         public static readonly Vector2 kMinHalfSize = kMinSize / 2f;
 
+        [HideInInspector]
         public Rect bodyRect = new Rect(Vector2.zero, kMinSize);
         
         public System.Func<object> getValue;
 
         public static System.Action<NodeConnection> OnConnectionCreated;
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         protected Node parentNode;
 
         void OnEnable()

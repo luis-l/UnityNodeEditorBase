@@ -9,6 +9,7 @@ namespace UNEB
     /// </summary>
     public class NodeGraph : ScriptableObject
     {
+        [HideInInspector]
         public List<Node> nodes = new List<Node>();
 
         /// <summary>
