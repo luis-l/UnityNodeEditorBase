@@ -6,7 +6,7 @@ namespace UNEB
 {
     public abstract class NodeConnection : ScriptableObject
     {
-        public static readonly Vector2 kMinSize = new Vector2(15f, 15f);
+        public static readonly Vector2 kMinSize = new Vector2(12f, 12f);
         public static readonly Vector2 kMinHalfSize = kMinSize / 2f;
 
         [HideInInspector]

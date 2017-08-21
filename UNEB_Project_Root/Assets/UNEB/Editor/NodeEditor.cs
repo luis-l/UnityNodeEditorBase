@@ -134,7 +134,7 @@ namespace UNEB
 
             rect.size *= ZoomScale;
             rect.center = Vector2.zero;
-            rect.position = graphToScreenSpace(rect.position);
+            rect.position = GraphToScreenSpace(rect.position);
             
             DrawTintTexture(rect, _circleTex, Color.gray);
         }
@@ -153,10 +153,10 @@ namespace UNEB
             right.x -= panOffset.x;
             left.x -= panOffset.x;
 
-            up = graphToScreenSpace(up);
-            down = graphToScreenSpace(down);
-            right = graphToScreenSpace(right);
-            left = graphToScreenSpace(left);
+            up = GraphToScreenSpace(up);
+            down = GraphToScreenSpace(down);
+            right = GraphToScreenSpace(right);
+            left = GraphToScreenSpace(left);
 
             DrawLine(right, left, Color.gray);
             DrawLine(up, down, Color.gray);
@@ -167,15 +167,24 @@ namespace UNEB
         /// </summary>
         private void drawGuide()
         {
-            Vector2 gridCenter = graphToScreenSpace(Vector2.zero);
+            Vector2 gridCenter = GraphToScreenSpace(Vector2.zero);
             DrawLine(gridCenter, Event.current.mousePosition, guideColor);
         }
 
         private void drawNodes()
         {
+            // Calculate the viewing rect in graph space.
+            var view = _window.Size;
+            view.size *= ZoomScale;
+            view.center = -panOffset;
+
+            // Render nodes within the view space for performance.
             foreach (Node node in graph.nodes) {
-                drawNode(node);
-                drawKnobs(node);
+
+                if (view.Overlaps(node.bodyRect)) {
+                    drawNode(node);
+                    drawKnobs(node);
+                }
             }
         }
 
@@ -194,21 +203,19 @@ namespace UNEB
         {
             // Convert the body rect from graph to screen space.
             var screenRect = knob.bodyRect;
-            screenRect.position = graphToScreenSpace(screenRect.position);
+            screenRect.position = GraphToScreenSpace(screenRect.position);
 
             GUI.DrawTexture(screenRect, _knobTex);
         }
 
         private void drawConnections()
         {
-            foreach (Node node in graph.nodes) {
-
+            foreach (var node in graph.nodes) {
                 foreach (var output in node.Outputs) {
+                    foreach (var input in output.Inputs) {
 
-                    foreach (NodeInput input in output.Inputs) {
-
-                        Vector2 start = graphToScreenSpace(output.bodyRect.center);
-                        Vector2 end = graphToScreenSpace(input.bodyRect.center);
+                        Vector2 start = GraphToScreenSpace(output.bodyRect.center);
+                        Vector2 end = GraphToScreenSpace(input.bodyRect.center);
 
                         DrawBezier(start, end, knobColor);
                     }
@@ -221,7 +228,7 @@ namespace UNEB
             var output = _window.state.selectedOutput;
 
             if (output != null) {
-                Vector2 start = graphToScreenSpace(output.bodyRect.center);
+                Vector2 start = GraphToScreenSpace(output.bodyRect.center);
                 DrawBezier(start, Event.current.mousePosition, Color.gray);
             }
         }
@@ -230,7 +237,7 @@ namespace UNEB
         {
             // Convert the node rect from graph to screen space.
             Rect screenRect = node.bodyRect;
-            screenRect.position = graphToScreenSpace(screenRect.position);
+            screenRect.position = GraphToScreenSpace(screenRect.position);
 
             // The node contents are grouped together within the node body.
             BeginGroup(screenRect, backgroundStyle, backColor);
@@ -475,7 +482,7 @@ namespace UNEB
         /// </summary>
         /// <param name="graphPos"></param>
         /// <returns></returns>
-        public Vector2 graphToScreenSpace(Vector2 graphPos)
+        public Vector2 GraphToScreenSpace(Vector2 graphPos)
         {
             return graphPos + _zoomAdjustment + panOffset;
         }
@@ -497,7 +504,7 @@ namespace UNEB
         /// <param name="graphPos"></param>
         public void graphToScreenSpaceZoomAdj(ref Vector2 graphPos)
         {
-            graphPos = graphToScreenSpace(graphPos) / ZoomScale;
+            graphPos = GraphToScreenSpace(graphPos) / ZoomScale;
         }
 
         /// <summary>

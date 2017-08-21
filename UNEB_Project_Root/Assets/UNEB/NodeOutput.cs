@@ -31,6 +31,11 @@ namespace UNEB
             get { return _inputs.Count; }
         }
 
+        public NodeInput GetInput(int index)
+        {
+            return _inputs[index];
+        }
+
         /// <summary>
         /// Returns true if the connection was added successfully.
         /// </summary>

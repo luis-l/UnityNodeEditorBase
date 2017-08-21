@@ -81,7 +81,6 @@ namespace UNEB
 
             editor.Draw();
             drawToolbar();
-
             triggers.Update();
         }
 
