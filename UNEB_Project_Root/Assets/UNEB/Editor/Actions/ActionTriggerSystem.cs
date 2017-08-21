@@ -43,6 +43,10 @@ namespace UNEB
                     tm.action();
                 }
             }
+            //Block all key inputs from passing through the Node Editor
+            if (Event.current.type == EventType.KeyDown || Event.current.type == EventType.KeyUp) {
+                Event.current.Use();
+            }
         }
 
         private void setupStandardTriggers()
@@ -79,6 +83,9 @@ namespace UNEB
 
             var recordClick = Create<InputTrigger>().EventOnly(EventType.MouseDown);
             recordClick.action = () => { window.state.lastClickedPosition = window.editor.MousePosition(); };
+
+            var homeView = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.F, false, false);
+            homeView.action = () => { window.editor.HomeView(); };
         }
 
         private void setupContextTriggers()
