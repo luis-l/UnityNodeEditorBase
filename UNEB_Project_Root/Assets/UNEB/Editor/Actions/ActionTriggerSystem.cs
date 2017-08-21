@@ -43,6 +43,11 @@ namespace UNEB
                     tm.action();
                 }
             }
+
+            // Block all key inputs from passing through the Unity Editor
+            if (Event.current.type == EventType.KeyDown || Event.current.type == EventType.KeyUp) {
+                Event.current.Use();
+            }
         }
 
         private void setupStandardTriggers()
