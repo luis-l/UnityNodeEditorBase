@@ -73,7 +73,16 @@ namespace UNEB
             };
 
             var selectSingle = Create<InputTrigger>().Mouse(EventType.MouseDown, InputTrigger.Button.Left);
-            selectSingle.action = () => { window.editor.OnMouseOverNode(onSingleSelected); };
+            selectSingle.action = () =>
+            {
+                if (isMouseOverNode())
+                    window.editor.OnMouseOverNode(onSingleSelected);
+                else
+                {
+                    GUI.FocusControl(null);
+                    window.Repaint();
+                }
+            };
 
             var undoInput = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.Z, true, false);
             undoInput.action = _manager.UndoAction;
