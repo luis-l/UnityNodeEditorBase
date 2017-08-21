@@ -81,6 +81,9 @@ namespace UNEB
 
             editor.Draw();
             drawToolbar();
+
+            // This must go after draw calls or there can be 
+            // GUI layout errors.
             triggers.Update();
         }
 
