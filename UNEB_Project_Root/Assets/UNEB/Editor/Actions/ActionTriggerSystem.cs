@@ -43,10 +43,6 @@ namespace UNEB
                     tm.action();
                 }
             }
-            //Block all key inputs from passing through the Node Editor
-            if (Event.current.type == EventType.KeyDown || Event.current.type == EventType.KeyUp) {
-                Event.current.Use();
-            }
         }
 
         private void setupStandardTriggers()
@@ -75,10 +71,10 @@ namespace UNEB
             var selectSingle = Create<InputTrigger>().Mouse(EventType.MouseDown, InputTrigger.Button.Left);
             selectSingle.action = () =>
             {
-                if (isMouseOverNode())
-                    window.editor.OnMouseOverNode(onSingleSelected);
-                else
-                {
+                bool bResult = window.editor.OnMouseOverNode(onSingleSelected);
+
+                // If the canvas is clicked then remove focus of GUI elements.
+                if (!bResult) {
                     GUI.FocusControl(null);
                     window.Repaint();
                 }
@@ -94,7 +90,7 @@ namespace UNEB
             recordClick.action = () => { window.state.lastClickedPosition = window.editor.MousePosition(); };
 
             var homeView = Create<InputTrigger>().Key(EventType.KeyDown, KeyCode.F, false, false);
-            homeView.action = () => { window.editor.HomeView(); };
+            homeView.action = window.editor.HomeView;
         }
 
         private void setupContextTriggers()
