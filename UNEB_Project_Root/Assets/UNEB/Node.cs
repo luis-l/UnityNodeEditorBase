@@ -9,8 +9,13 @@ namespace UNEB
     /// <summary>
     /// The visual representation of a logic unit such as an object or function.
     /// </summary>
-    public class Node : ScriptableObject
+    public abstract class Node : ScriptableObject
     {
+        /// <summary>
+        /// The name of the node.
+        /// </summary>
+        public abstract new string name { get; }
+
         public static readonly Vector2 kDefaultSize = new Vector2(140f, 110f);
 
         /// <summary>
@@ -73,9 +78,7 @@ namespace UNEB
         /// <summary>
         /// Use this for initialization.
         /// </summary>
-        public virtual void Init()
-        {
-            name = "Node";
+        public virtual void Init() {
             bodyRect.size = kDefaultSize;
         }
 

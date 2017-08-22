@@ -5,6 +5,7 @@ using UNEB;
 
 public class OutputTexture2D : Node
 {
+    public override string name { get { return "Output Texture2D"; } }
 
     private Texture2D texPreview;
 
@@ -17,7 +18,7 @@ public class OutputTexture2D : Node
         set { _texRes = Mathf.Clamp(value, 10, 300); }
     }
 
-    public OutputTexture2D()
+    public override void Init()
     {
         inputNoise = AddInput();
         inputNoise.name = "Input Noise";
