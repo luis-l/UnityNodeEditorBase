@@ -5,8 +5,6 @@ using UNEB;
 
 public class OutputTexture2D : Node
 {
-    public override string name { get { return "Output Texture2D"; } }
-
     private Texture2D texPreview;
 
     NodeInput inputNoise;

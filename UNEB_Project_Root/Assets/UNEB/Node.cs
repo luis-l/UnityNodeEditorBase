@@ -11,11 +11,6 @@ namespace UNEB
     /// </summary>
     public abstract class Node : ScriptableObject
     {
-        /// <summary>
-        /// The name of the node.
-        /// </summary>
-        public abstract new string name { get; }
-
         public static readonly Vector2 kDefaultSize = new Vector2(140f, 110f);
 
         /// <summary>
@@ -50,6 +45,19 @@ namespace UNEB
         [SerializeField, HideInInspector]
         private List<NodeInput> _inputs = new List<NodeInput>();
 
+        // Hides the node asset.
+        // Sets up the name via type information.
+        void OnEnable()
+        {
+            hideFlags = HideFlags.HideInHierarchy;
+            name = GetType().Name;
+
+#if UNITY_EDITOR
+            name = ObjectNames.NicifyVariableName(name);
+#endif
+
+        }
+
         /// <summary>
         /// Always call the base OnDisable() to cleanup the connection objects.
         /// </summary>
@@ -68,11 +76,6 @@ namespace UNEB
                     ScriptableObject.DestroyImmediate(output, true);
                     return true;
                 });
-        }
-
-        void OnEnable()
-        {
-            hideFlags = HideFlags.HideInHierarchy;
         }
 
         /// <summary>

@@ -5,8 +5,6 @@ using UNEB;
 
 public class VoronoiNode : Node
 {
-    public override string name { get { return "Voronoi"; } }
-
     private Voronoi _noise = new Voronoi();
 
     public override void Init()

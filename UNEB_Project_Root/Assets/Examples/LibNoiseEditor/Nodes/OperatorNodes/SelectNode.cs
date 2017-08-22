@@ -6,8 +6,6 @@ using UNEB;
 
 public class SelectNode : Node
 {
-    public override string name { get { return "Select"; } }
-
     private Select _op = new Select();
 
     public override void Init()
