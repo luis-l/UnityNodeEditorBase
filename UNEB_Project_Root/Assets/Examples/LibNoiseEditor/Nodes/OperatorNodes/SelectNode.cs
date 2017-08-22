@@ -6,12 +6,12 @@ using UNEB;
 
 public class SelectNode : Node
 {
+    public override string name { get { return "Select"; } }
+
     private Select _op = new Select();
 
-    public SelectNode()
+    public override void Init()
     {
-        name = "Select";
-
         var inputA = AddInput();
         inputA.name = "Input A";
 

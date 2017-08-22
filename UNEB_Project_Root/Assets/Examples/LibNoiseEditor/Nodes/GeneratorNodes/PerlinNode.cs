@@ -11,10 +11,9 @@ public class PerlinNode : Node
 {
     private Perlin _noise = new Perlin();
 
-    public PerlinNode()
-    {
-        name = "Perlin";
+    public override string name { get { return "Perlin Noise"; } }
 
+    public override void Init() {
         var noiseIn = AddInput();
         noiseIn.name = "Input";
 

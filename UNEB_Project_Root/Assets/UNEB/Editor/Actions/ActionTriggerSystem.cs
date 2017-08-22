@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UNEB.Utility;
+using System.Reflection;
+using System.Linq;
 
 namespace UNEB
 {
@@ -99,17 +101,28 @@ namespace UNEB
 
         private void setupContextTriggers()
         {
-            // Need to automate this via reflection.
-            Action createBaseNode = () =>
-            {
-                _manager.window.state.typeToCreate = typeof(BasicNode);
-                _manager.RunUndoableAction<CreateNodeAction>();
-            };
-
-            Pair<string, Action>[] canvasContext = 
-            { 
-                ContextItem("Basic Node", createBaseNode)
-            };
+            //Get all classes deriving from Node via reflection
+            Type derivedType = typeof(Node);
+            Assembly assembly = Assembly.GetAssembly(derivedType);
+            List<Type> nodeTypes = assembly
+                .GetTypes()
+                .Where(t =>
+                    t != derivedType &&
+                    derivedType.IsAssignableFrom(t)
+                    ).ToList();
+            //Populate canvasContext with entries for all node types
+            Pair<string, Action>[] canvasContext = new Pair<string, Action>[nodeTypes.Count];
+            for (int i = 0; i < nodeTypes.Count; i++) {
+                Type nodeType = nodeTypes[i];
+                Action createNode = () =>
+                {
+                    _manager.window.state.typeToCreate = nodeType;
+                    _manager.RunUndoableAction<CreateNodeAction>();
+                };
+                //We need to create an instance to get the name.
+                Node node = (Node)ScriptableObject.CreateInstance(nodeType);
+                canvasContext[i] = ContextItem(node.name, createNode);
+            }
 
             var canvasTrigger = Create<ContextTrigger>().Build(canvasContext).EventOnly(EventType.ContextClick);
             canvasTrigger.triggers.Add(isMouseOverCanvas);
