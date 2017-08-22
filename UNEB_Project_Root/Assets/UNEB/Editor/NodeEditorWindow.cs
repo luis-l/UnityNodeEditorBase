@@ -285,8 +285,8 @@ namespace UNEB
                 NodeEditorWindow windowToUse = null;
 
                 // Try to find an editor window without a graph...
-                var bonsaiWindows = Resources.FindObjectsOfTypeAll<NodeEditorWindow>();
-                foreach (var w in bonsaiWindows) {
+                var windows = Resources.FindObjectsOfTypeAll<NodeEditorWindow>();
+                foreach (var w in windows) {
 
                     // The canvas is already opened
                     if (w.graph == graphSelected) {
