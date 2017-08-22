@@ -13,7 +13,7 @@ public class PerlinNode : Node
 
     public override string name { get { return "Perlin Noise"; } }
 
-    public override void Init() {
+    public override void Init() { 
         var noiseIn = AddInput();
         noiseIn.name = "Input";
 
