@@ -249,7 +249,7 @@ namespace UNEB
         {
             Action<NodeInput> startConnFromInput = (NodeInput input) =>
             {
-                window.state.selectedOutput = input.OutputConnection;
+                window.state.selectedOutput = input.Outputs[0];
 
                 // Detach this input if we are starting a connection action from the input.
                 if (window.state.selectedOutput != null) {

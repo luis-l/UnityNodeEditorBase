@@ -74,8 +74,16 @@ namespace UNEB
             // Make the connection.
             if (_input != null && _output.CanConnectInput(_input)) {
 
-                cacheOldConnections();
-                disconnectOldConnections();
+                if (!_output.bCanHaveMultipleConnections)
+                {
+                    _output.RemoveAll();
+                }
+
+                if (!_input.bCanHaveMultipleConnections) {
+                    cacheOldConnections();
+                    disconnectOldConnections();
+                }
+
                 return _output.Add(_input);
             }
 
@@ -86,7 +94,7 @@ namespace UNEB
         {
             // Check if the receiving node was already connected.
             if (_input != null && _input.HasOutputConnected()) {
-                _oldConnectedOutput = _input.OutputConnection;
+                _oldConnectedOutput = _input.Outputs[0];
             }
 
             // Check if the origin node already had inputs

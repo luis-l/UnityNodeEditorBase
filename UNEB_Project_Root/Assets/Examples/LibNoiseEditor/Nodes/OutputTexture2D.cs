@@ -50,7 +50,7 @@ public class OutputTexture2D : Node
             return;
         }
 
-        var noise = inputNoise.OutputConnection.GetValue<LibNoise.Generator.Perlin>();
+        var noise = inputNoise.Outputs[0].GetValue<LibNoise.Generator.Perlin>();
 
         for (int x = 0; x < texPreview.width; ++x) {
             for (int y = 0; y < texPreview.height; ++y) {
