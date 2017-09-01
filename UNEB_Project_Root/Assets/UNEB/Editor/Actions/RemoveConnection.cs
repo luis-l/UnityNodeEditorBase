@@ -12,7 +12,7 @@ namespace UNEB
         public override void Do()
         {
             _input = manager.window.state.selectedInput;
-            _output = _input.OutputConnection;
+            _output = _input.Outputs[0];
 
             _output.Remove(_input);
 
