@@ -15,7 +15,7 @@ namespace UNEB
         /// <summary>
         /// Callback for when a node is modified within the editor
         /// </summary>
-        public static Action<NodeGraph, Node> onUpdateNode;
+        public static Action<NodeGraph, Node> onNodeGuiChange;
 
         /// <summary>
         /// The rect bounds defining the recticle at the grid center.
@@ -259,7 +259,7 @@ namespace UNEB
             EditorGUI.BeginChangeCheck();
             node.OnNodeGUI();
             if (EditorGUI.EndChangeCheck()) 
-                if (onUpdateNode != null) onUpdateNode(graph, node);
+                if (onNodeGuiChange != null) onNodeGuiChange(graph, node);
 
             GUILayout.EndArea();
             GUI.EndGroup();
