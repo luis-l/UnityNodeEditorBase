@@ -259,7 +259,7 @@ namespace UNEB
             EditorGUI.BeginChangeCheck();
             node.OnNodeGUI();
             if (EditorGUI.EndChangeCheck()) 
-                onUpdateNode(graph, node);
+                if (onUpdateNode != null) onUpdateNode(graph, node);
 
             GUILayout.EndArea();
             GUI.EndGroup();
