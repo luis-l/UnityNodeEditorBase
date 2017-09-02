@@ -13,6 +13,11 @@ namespace UNEB
     public class NodeEditor
     {
         /// <summary>
+        /// Callback for when a node is modified within the editor
+        /// </summary>
+        public static Action<NodeGraph, Node> onNodeGuiChange;
+
+        /// <summary>
         /// The rect bounds defining the recticle at the grid center.
         /// </summary>
         public static readonly Rect kReticleRect = new Rect(0, 0, 8, 8);
@@ -250,7 +255,11 @@ namespace UNEB
             GUILayout.BeginArea(localRect, GUIStyle.none);
 
             node.HeaderStyle.normal.background = _headerTex;
+
+            EditorGUI.BeginChangeCheck();
             node.OnNodeGUI();
+            if (EditorGUI.EndChangeCheck()) 
+                if (onNodeGuiChange != null) onNodeGuiChange(graph, node);
 
             GUILayout.EndArea();
             GUI.EndGroup();
