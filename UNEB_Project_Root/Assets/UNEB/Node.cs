@@ -160,18 +160,18 @@ namespace UNEB
             EditorGUILayout.EndVertical();
         }
 
-        public NodeInput AddInput(string name = "input", bool multipleConnections = false)
+        public NodeInput AddInput(string name = "input")
         {
-            var input = NodeInput.Create(this, multipleConnections);
+            var input = NodeInput.Create(this);
             input.name = name;
             _inputs.Add(input);
 
             return input;
         }
 
-        public NodeOutput AddOutput(string name = "output", bool multipleConnections = false)
+        public NodeOutput AddOutput(string name = "output")
         {
-            var output = NodeOutput.Create(this, multipleConnections);
+            var output = NodeOutput.Create(this);
             output.name = name;
             _outputs.Add(output);
 

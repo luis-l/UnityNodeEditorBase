@@ -21,7 +21,7 @@ namespace UNEB
             _bCanHaveMultipleConnections = multipleConnections;
         }
 
-        public List<NodeInput> Inputs
+        public IEnumerable<NodeInput> Inputs
         {
             get { return _inputs; }
         }
@@ -51,7 +51,7 @@ namespace UNEB
             // This test is not inside the CanConnectInput() because
             // an action can remove the old connections automatically to make it
             // easier for the user to change connections between nodes.
-            if (input.HasOutputConnected() && !input.bCanHaveMultipleConnections) {
+            if (input.HasOutputConnected()) {
 
                 // Changes to the inputs need to be properly handled by the Action system,
                 // so it works with undo.
@@ -86,7 +86,7 @@ namespace UNEB
             }
 
             // Avoid connecting when it is already connected.
-            if (input.Outputs.Contains(this)) {
+            if (input.OutputConnection == this) {
                 Debug.LogWarning("Already Connected");
                 return false;
             }
@@ -98,7 +98,7 @@ namespace UNEB
         {
             if (_inputs.Remove(input)) {
                 parentNode.OnInputConnectionRemoved(input);
-                input.Disconnect(this);
+                input.Disconnect();
             }
         }
 
@@ -112,7 +112,7 @@ namespace UNEB
 
             foreach (NodeInput input in inputs) {
                 parentNode.OnInputConnectionRemoved(input);
-                input.Disconnect(this);
+                input.Disconnect();
             }
         }
 

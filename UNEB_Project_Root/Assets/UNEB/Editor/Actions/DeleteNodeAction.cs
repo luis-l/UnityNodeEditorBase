@@ -46,7 +46,7 @@ namespace UNEB
             foreach (var input in _nodeRemoved.Inputs) {
 
                 if (input.HasOutputConnected()) {
-                    _oldConnectedOutputs.Add(new InputToOutputPair(input, input.Outputs[0]));
+                    _oldConnectedOutputs.Add(new InputToOutputPair(input, input.OutputConnection));
                 }
             }
 
@@ -90,8 +90,7 @@ namespace UNEB
             foreach (var input in _nodeRemoved.Inputs) {
 
                 if (input.HasOutputConnected()) {
-                    //input.Outputs.Remove(input);
-                    input.Outputs.Clear();
+                    input.OutputConnection.Remove(input);
                 }
             }
         }

@@ -1,5 +1,4 @@
 ﻿
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -8,18 +7,14 @@ namespace UNEB
     public class NodeInput : NodeConnection
     {
         [SerializeField]
-        private bool _bCanHaveMultipleConnections;
-
-        [SerializeField]
-        private List<NodeOutput> _outputs = new List<NodeOutput>();
+        private NodeOutput _connectedOutput;
 
         private GUIStyle _style;
 
-        public virtual void Init(Node parent, bool multipleConnections = true)
+        public override void Init(Node parent)
         {
             base.Init(parent);
             name = "input";
-            _bCanHaveMultipleConnections = multipleConnections;
         }
 
         /// <summary>
@@ -28,37 +23,49 @@ namespace UNEB
         /// <param name="output"></param>
         internal void Connect(NodeOutput output)
         {
-            if (!_outputs.Contains(output))
-                _outputs.Add(output);
+            if (!HasOutputConnected()) {
+                _connectedOutput = output;
+            }
+
+            else {
+
+                const string msg = 
+                    "Connot Connect." +
+                    "The Input has an output connected and should be disconnected first, " +
+                    "before trying to connect to some output.";
+
+                Debug.LogWarning(msg);
+            }
         }
 
         /// <summary>
         /// Should only be called by NodeOutput.
         /// </summary>
-        internal void Disconnect(NodeOutput output)
+        internal void Disconnect()
         {
-            if (_outputs.Contains(output))
-                _outputs.Remove(output);
+            if (_connectedOutput.Inputs.Contains(this)) {
+                
+                const string msg = 
+                    "Cannot disconnect. " +
+                    "The Output should remove this Input from its input list first, " +
+                    "before calling Disconnect().";
+
+                Debug.LogWarning(msg);
+            }
+
+            else {
+                _connectedOutput = null;
+            }
         }
 
         public bool HasOutputConnected()
         {
-            return _outputs.Count > 0;
+            return _connectedOutput != null;
         }
 
-        public List<NodeOutput> Outputs
+        public NodeOutput OutputConnection
         {
-            get { return _outputs; }
-        }
-
-        public int OutputCount
-        {
-            get { return _outputs.Count; }
-        }
-
-        public NodeOutput GetOutput(int index)
-        {
-            return _outputs[index];
+            get { return _connectedOutput; }
         }
 
         public override GUIStyle GetStyle()
@@ -85,15 +92,10 @@ namespace UNEB
             return parentNode.bodyRect.xMin;
         }
 
-        public bool bCanHaveMultipleConnections
-        {
-            get { return _bCanHaveMultipleConnections; }
-        }
-
-        public static NodeInput Create(Node parent, bool multipleConnections = false)
+        public static NodeInput Create(Node parent)
         {
             var input = ScriptableObject.CreateInstance<NodeInput>();
-            input.Init(parent, multipleConnections);
+            input.Init(parent);
 
             NodeConnection.OnConnectionCreated(input);
             return input;
