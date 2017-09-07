@@ -46,6 +46,18 @@ namespace UNEB
             return _outputs.Count > 0;
         }
 
+        public void RemoveAll() {
+            // Cache the outputs since in order to disconnect them,
+            // they must be removed from _outputs List.
+            var outputs = new List<NodeOutput>(_outputs);
+
+            _outputs.Clear();
+
+            foreach (NodeOutput output in outputs) {
+                output.Remove(this);
+            }
+        }
+
         public List<NodeOutput> Outputs
         {
             get { return _outputs; }

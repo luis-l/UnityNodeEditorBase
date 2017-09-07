@@ -7,11 +7,11 @@ using UNEB.Utility;
 
 namespace UNEB
 {
-    // Each input is paired with 1 output.
-    using InputToOutputPair = Pair<NodeInput, NodeOutput>;
+    // Each input can have many outputs
+    using InputToOutputPair = Pair<NodeInput, List<NodeOutput>>;
 
     // Each output can have many inputs
-    using OutputToInputsPair = Pair<NodeOutput, System.Collections.Generic.List<NodeInput>>;
+    using OutputToInputsPair = Pair<NodeOutput, List<NodeInput>>;
 
     public class DeleteNodeAction : UndoableAction
     {
@@ -27,6 +27,7 @@ namespace UNEB
 
         public DeleteNodeAction()
         {
+
             _oldConnectedOutputs = new List<InputToOutputPair>();
             _oldConnectedInputs = new List<OutputToInputsPair>();
         }
@@ -46,7 +47,7 @@ namespace UNEB
             foreach (var input in _nodeRemoved.Inputs) {
 
                 if (input.HasOutputConnected()) {
-                    _oldConnectedOutputs.Add(new InputToOutputPair(input, input.Outputs[0]));
+                    _oldConnectedOutputs.Add(new InputToOutputPair(input, input.Outputs.ToList()));
                 }
             }
 
@@ -86,13 +87,9 @@ namespace UNEB
                 output.RemoveAll();
             }
 
-            // For all the inputs for this node, have their connected outputs disconnect.
+            // For all the inputs for this node, remove all the connected outputs.
             foreach (var input in _nodeRemoved.Inputs) {
-
-                if (input.HasOutputConnected()) {
-                    //input.Outputs.Remove(input);
-                    input.Outputs.Clear();
-                }
+                input.RemoveAll();
             }
         }
 
@@ -102,9 +99,11 @@ namespace UNEB
             foreach (InputToOutputPair inOutPair in _oldConnectedOutputs) {
 
                 NodeInput input = inOutPair.item1;
-                NodeOutput output = inOutPair.item2;
+                List<NodeOutput> outputs = inOutPair.item2;
 
-                output.Add(input);
+                foreach (var output in outputs) {
+                    output.Add(input);
+                }
             }
 
             // For all the remembered outputs (of this node) to inputs, reconnect.

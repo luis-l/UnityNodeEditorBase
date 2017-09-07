@@ -32,3 +32,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+UNEB_Project_Root/\.vs/UNEB_Project_Root/v15/sqlite3/storage\.ide
