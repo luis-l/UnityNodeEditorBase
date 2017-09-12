@@ -296,6 +296,11 @@ namespace UNEB
             string newPath = getSaveFilePath();
             string currentPath = getCurrentGraphPath();
 
+            //If asset exists on path, delete it first.
+            if (AssetDatabase.LoadAssetAtPath<ScriptableObject>(newPath) != null) {
+                AssetDatabase.DeleteAsset(newPath);
+            }
+
             string result = AssetDatabase.ValidateMoveAsset(currentPath, newPath);
 
             if (result.Length == 0) {
